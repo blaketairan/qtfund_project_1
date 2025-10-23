@@ -1,0 +1,20 @@
+{
+  "name": "qtfund-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for QTFund project",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack serve --mode development --port 3000",
+    "build": "webpack --mode production",
+    "dev": "webpack serve --mode development --port 3000 --hot"
+  },
+  "keywords": ["frontend", "qtfund"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.88.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1",
+    "html-webpack-plugin": "^5.5.3"
+  }
+}
