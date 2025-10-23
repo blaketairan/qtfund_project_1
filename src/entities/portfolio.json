@@ -1,0 +1,69 @@
+{
+  "Portfolio": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "Unique portfolio identifier"
+      },
+      "userId": {
+        "type": "string",
+        "description": "Owner user ID"
+      },
+      "name": {
+        "type": "string",
+        "description": "Portfolio name"
+      },
+      "totalValue": {
+        "type": "number",
+        "description": "Total portfolio value"
+      },
+      "totalCost": {
+        "type": "number",
+        "description": "Total cost basis"
+      },
+      "totalReturn": {
+        "type": "number",
+        "description": "Total return amount"
+      },
+      "returnPercentage": {
+        "type": "number",
+        "description": "Return percentage"
+      },
+      "holdings": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "fundId": {
+              "type": "string"
+            },
+            "shares": {
+              "type": "number"
+            },
+            "avgCost": {
+              "type": "number"
+            },
+            "currentValue": {
+              "type": "number"
+            }
+          },
+          "required": ["fundId", "shares", "avgCost", "currentValue"]
+        },
+        "description": "Fund holdings in portfolio"
+      },
+      "createdAt": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Portfolio creation date"
+      },
+      "updatedAt": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Last update timestamp"
+      }
+    },
+    "required": ["id", "userId", "name", "totalValue", "holdings"]
+  }
+}
+

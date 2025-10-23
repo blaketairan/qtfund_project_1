@@ -1,0 +1,37 @@
+{
+  "User": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "Unique user identifier"
+      },
+      "username": {
+        "type": "string",
+        "description": "User login name"
+      },
+      "email": {
+        "type": "string",
+        "format": "email",
+        "description": "User email address"
+      },
+      "role": {
+        "type": "string",
+        "enum": ["admin", "user", "manager"],
+        "description": "User role in the system"
+      },
+      "createdAt": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Account creation timestamp"
+      },
+      "lastLogin": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Last login timestamp"
+      }
+    },
+    "required": ["id", "username", "email", "role"]
+  }
+}
+

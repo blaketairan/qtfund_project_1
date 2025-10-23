@@ -1,0 +1,52 @@
+{
+  "Transaction": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "Unique transaction identifier"
+      },
+      "userId": {
+        "type": "string",
+        "description": "User ID who made the transaction"
+      },
+      "fundId": {
+        "type": "string",
+        "description": "Fund ID involved in transaction"
+      },
+      "type": {
+        "type": "string",
+        "enum": ["buy", "sell", "redeem", "dividend"],
+        "description": "Transaction type"
+      },
+      "amount": {
+        "type": "number",
+        "description": "Transaction amount"
+      },
+      "shares": {
+        "type": "number",
+        "description": "Number of shares"
+      },
+      "price": {
+        "type": "number",
+        "description": "Price per share at transaction time"
+      },
+      "status": {
+        "type": "string",
+        "enum": ["pending", "completed", "failed", "cancelled"],
+        "description": "Transaction status"
+      },
+      "timestamp": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Transaction timestamp"
+      },
+      "notes": {
+        "type": "string",
+        "description": "Additional notes"
+      }
+    },
+    "required": ["id", "userId", "fundId", "type", "amount", "status", "timestamp"]
+  }
+}
+

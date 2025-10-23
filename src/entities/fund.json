@@ -1,0 +1,61 @@
+{
+  "Fund": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "Unique fund identifier"
+      },
+      "name": {
+        "type": "string",
+        "description": "Fund name"
+      },
+      "code": {
+        "type": "string",
+        "description": "Fund code"
+      },
+      "type": {
+        "type": "string",
+        "enum": ["equity", "bond", "mixed", "money_market", "index"],
+        "description": "Fund type"
+      },
+      "netValue": {
+        "type": "number",
+        "description": "Current net asset value"
+      },
+      "totalAssets": {
+        "type": "number",
+        "description": "Total assets under management"
+      },
+      "dailyChange": {
+        "type": "number",
+        "description": "Daily percentage change"
+      },
+      "yearReturn": {
+        "type": "number",
+        "description": "Year-to-date return percentage"
+      },
+      "riskLevel": {
+        "type": "string",
+        "enum": ["low", "medium", "high", "very_high"],
+        "description": "Risk level"
+      },
+      "managerId": {
+        "type": "string",
+        "description": "Fund manager user ID"
+      },
+      "createdAt": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Fund creation date"
+      },
+      "updatedAt": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Last update timestamp"
+      }
+    },
+    "required": ["id", "name", "code", "type", "netValue"]
+  }
+}
+
