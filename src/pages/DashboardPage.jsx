@@ -7,6 +7,7 @@ import SearchBar from '../components/dashboard/SearchBar.jsx';
 import MarketFilter from '../components/dashboard/MarketFilter.jsx';
 import ScriptEditor from '../components/dashboard/ScriptEditor.jsx';
 import ScriptManager from '../components/dashboard/ScriptManager.jsx';
+import { getScripts } from '../services/scriptStorageService.js';
 
 const DashboardPage = () => {
   const { state, dispatch } = useDashboard();
@@ -23,6 +24,7 @@ const DashboardPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMarkets, setSelectedMarkets] = useState(['SH', 'SZ', 'BJ']);
   const [selectedScriptIds, setSelectedScriptIds] = useState([]);
+  const [scriptLibrary, setScriptLibrary] = useState([]);
 
   useEffect(() => {
     const filtered = state.stocks.filter(stock => {
@@ -59,7 +61,21 @@ const DashboardPage = () => {
         console.error('Failed to load script selections:', err);
       }
     }
+
+    loadScriptLibrary();
   }, []);
+
+  const loadScriptLibrary = async () => {
+    try {
+      const response = await getScripts();
+      if (response.code === 200 && response.data) {
+        const scripts = Array.isArray(response.data) ? response.data : [];
+        setScriptLibrary(scripts);
+      }
+    } catch (err) {
+      console.error('Failed to load script library:', err);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -115,7 +131,11 @@ const DashboardPage = () => {
             </div>
           )}
           <div className="p-6">
-            <StockTable visibleColumns={visibleColumns} selectedScriptIds={selectedScriptIds} />
+            <StockTable 
+              visibleColumns={visibleColumns} 
+              selectedScriptIds={selectedScriptIds}
+              scriptLibrary={scriptLibrary} 
+            />
           </div>
         </div>
       </div>

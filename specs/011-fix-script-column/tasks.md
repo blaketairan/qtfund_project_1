@@ -29,9 +29,9 @@ Testing & Validation
 
 **Goal**: Add script library state management in DashboardPage to provide script data to child components.
 
-- [ ] T001 Add scriptLibrary state in DashboardPage.jsx
-- [ ] T002 Load script library on component mount in DashboardPage.jsx
-- [ ] T003 Pass scriptLibrary prop to StockTable in DashboardPage.jsx
+- [X] T001 Add scriptLibrary state in DashboardPage.jsx
+- [X] T002 Load script library on component mount in DashboardPage.jsx
+- [X] T003 Pass scriptLibrary prop to StockTable in DashboardPage.jsx
 
 ### Phase 2: User Story 1 - Fix Column Name Display [US1]
 
@@ -39,9 +39,9 @@ Testing & Validation
 
 **Independent Test**: Select a script that returns null for some stocks. Verify the column header shows the script name (not "Custom").
 
-- [ ] T004 [US1] Update StockTable to accept scriptLibrary prop in StockTable.jsx
-- [ ] T005 [US1] Modify getScriptColumns to lookup names from library in StockTable.jsx
-- [ ] T006 [US1] Test column header displays correct script name when results are null
+- [X] T004 [US1] Update StockTable to accept scriptLibrary prop in StockTable.jsx
+- [X] T005 [US1] Modify getScriptColumns to lookup names from library in StockTable.jsx
+- [X] T006 [US1] Test column header displays correct script name when results are null
 
 ## Implementation Strategy
 
