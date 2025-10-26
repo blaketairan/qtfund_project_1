@@ -1,4 +1,6 @@
-const API_BASE = 'https://qtfund.com/api';
+import { getApiBaseUrl } from '../config/apiConfig.js';
+
+const API_BASE = getApiBaseUrl();
 
 export const executeScript = async (scriptConfig) => {
   const { script, script_id, column_name, stock_symbols } = scriptConfig;

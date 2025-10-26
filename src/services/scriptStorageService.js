@@ -1,4 +1,6 @@
-const API_BASE = 'https://qtfund.com/api';
+import { getApiBaseUrl } from '../config/apiConfig.js';
+
+const API_BASE = getApiBaseUrl();
 
 export const createScript = async (script) => {
   const response = await fetch(`${API_BASE}/custom-calculations/scripts`, {

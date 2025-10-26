@@ -44,8 +44,8 @@ This delivers all functionality: centralized configuration and all service files
 
 ### Setup Tasks
 
-- [ ] T001 Create src/config directory
-- [ ] T002 Create src/config/apiConfig.js with basic configuration structure
+- [x] T001 Create src/config directory
+- [x] T002 Create src/config/apiConfig.js with basic configuration structure
 
 ---
 
@@ -70,15 +70,15 @@ This delivers all functionality: centralized configuration and all service files
 
 ### Configuration File Tasks
 
-- [ ] T003 [US1] Implement environment detection in src/config/apiConfig.js
-- [ ] T004 [US1] Export getApiBaseUrl() function in src/config/apiConfig.js
+- [x] T003 [US1] Implement environment detection in src/config/apiConfig.js
+- [x] T004 [US1] Export getApiBaseUrl() function in src/config/apiConfig.js
 
 ### Service Refactoring Tasks (Parallelizable)
 
-- [ ] T005 [P] [US1] Refactor src/services/stockService.js to use apiConfig
-- [ ] T006 [P] [US1] Refactor src/services/scriptService.js to use apiConfig
-- [ ] T007 [P] [US1] Refactor src/services/scriptStorageService.js to use apiConfig
-- [ ] T008 [P] [US1] Refactor src/utils/constants.js to use apiConfig
+- [x] T005 [P] [US1] Refactor src/services/stockService.js to use apiConfig
+- [x] T006 [P] [US1] Refactor src/services/scriptService.js to use apiConfig
+- [x] T007 [P] [US1] Refactor src/services/scriptStorageService.js to use apiConfig
+- [x] T008 [P] [US1] Refactor src/utils/constants.js to use apiConfig
 
 ---
 
@@ -92,7 +92,7 @@ This delivers all functionality: centralized configuration and all service files
 
 ### Validation Tasks
 
-- [ ] T009 Verify all API endpoints use centralized configuration and rebuild application
+- [x] T009 Verify all API endpoints use centralized configuration and rebuild application
 
 ---
 
