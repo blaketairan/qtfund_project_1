@@ -3,7 +3,7 @@ import { useDashboard } from '../../context/DashboardContext.jsx';
 import { fetchStockList } from '../../services/stockService.js';
 import { formatCurrency, formatPercentage, formatVolume } from '../../utils/numberFormat.js';
 
-const StockTable = ({ visibleColumns, selectedScriptIds = [] }) => {
+const StockTable = ({ visibleColumns, selectedScriptIds = [], scriptLibrary = [] }) => {
   const { state, dispatch } = useDashboard();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -86,15 +86,15 @@ const StockTable = ({ visibleColumns, selectedScriptIds = [] }) => {
   ];
 
   const getScriptColumns = () => {
-    if (!sortedStocks || sortedStocks.length === 0) return [];
+    if (!selectedScriptIds || selectedScriptIds.length === 0) return [];
     
-    const firstStock = sortedStocks[0];
-    if (!firstStock?.script_results) return [];
-    
-    return Object.keys(firstStock.script_results).map(scriptId => ({
-      scriptId,
-      columnName: firstStock.script_results[scriptId]?.column_name || 'Custom'
-    }));
+    return selectedScriptIds.map(scriptId => {
+      const script = scriptLibrary.find(s => s.id == scriptId);
+      return {
+        scriptId,
+        columnName: script?.name || script?.description || `Script ${scriptId}`
+      };
+    });
   };
 
   const scriptColumns = getScriptColumns();
