@@ -19,9 +19,17 @@ const StockTable = ({ visibleColumns }) => {
     setError(null);
     try {
       const response = await fetchStockList({ limit: 200 });
-      if (response.code === 200 && response.data.items) {
-        dispatch({ type: 'SET_STOCKS', payload: response.data.items });
-        dispatch({ type: 'SET_FILTERED_STOCKS', payload: response.data.items });
+      if (response.code === 200 && response.data) {
+        const items = Array.isArray(response.data) 
+          ? response.data 
+          : response.data.items;
+        
+        if (items && items.length > 0) {
+          dispatch({ type: 'SET_STOCKS', payload: items });
+          dispatch({ type: 'SET_FILTERED_STOCKS', payload: items });
+        } else {
+          setError('No stock data available');
+        }
       } else {
         setError('Failed to load stock data');
       }
