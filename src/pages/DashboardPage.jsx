@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useDashboard } from '../context/DashboardContext.jsx';
+import NavigationBar from '../components/layout/NavigationBar.jsx';
 import StockTable from '../components/dashboard/StockTable.jsx';
 import ColumnSettings from '../components/dashboard/ColumnSettings.jsx';
 import SearchBar from '../components/dashboard/SearchBar.jsx';
 import MarketFilter from '../components/dashboard/MarketFilter.jsx';
+import ScriptEditor from '../components/dashboard/ScriptEditor.jsx';
+import ScriptManager from '../components/dashboard/ScriptManager.jsx';
 
 const DashboardPage = () => {
   const { state, dispatch } = useDashboard();
@@ -16,6 +19,7 @@ const DashboardPage = () => {
     'market_code',
   ]);
   const [showColumnSettings, setShowColumnSettings] = useState(false);
+  const [showScriptEditor, setShowScriptEditor] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMarkets, setSelectedMarkets] = useState(['SH', 'SZ', 'BJ']);
 
@@ -48,7 +52,8 @@ const DashboardPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <NavigationBar />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="bg-white shadow-sm rounded-lg overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex justify-between items-center mb-4">
@@ -56,12 +61,20 @@ const DashboardPage = () => {
                 <h1 className="text-2xl font-bold text-gray-900">Stock Dashboard</h1>
                 <p className="mt-1 text-sm text-gray-500">Real-time stock data and quantitative analysis</p>
               </div>
-              <button
-                onClick={() => setShowColumnSettings(!showColumnSettings)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-              >
-                Column Settings
-              </button>
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowColumnSettings(!showColumnSettings)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                >
+                  Column Settings
+                </button>
+                <button
+                  onClick={() => setShowScriptEditor(!showScriptEditor)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                >
+                  自定义脚本
+                </button>
+              </div>
             </div>
             <div className="space-y-3">
               <SearchBar onSearchChange={setSearchTerm} />
@@ -74,6 +87,14 @@ const DashboardPage = () => {
           {showColumnSettings && (
             <div className="p-6 border-b border-gray-200">
               <ColumnSettings visibleColumns={visibleColumns} onColumnsChange={setVisibleColumns} />
+            </div>
+          )}
+          {showScriptEditor && (
+            <div className="p-6 border-b border-gray-200">
+              <div className="space-y-6">
+                <ScriptEditor />
+                <ScriptManager />
+              </div>
             </div>
           )}
           <div className="p-6">

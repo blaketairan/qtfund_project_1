@@ -1,0 +1,241 @@
+{
+  "title": "Dashboard UI Enhancement Contracts",
+  "version": "1.0.0",
+  "date": "2025-01-27",
+  "feature": "009-dashboard-enhancement",
+  "description": "Component contracts for navigation bar, script editor UI, and styling enhancements",
+  
+  "components": {
+    "NavigationBar": {
+      "summary": "Top navigation bar with user authentication status and menu items",
+      "props": {
+        "None (reads from AuthContext)": {
+          "type": "context",
+          "description": "Reads isAuthenticated and userInfo from AuthContext"
+        }
+      },
+      "required_from_context": [
+        "isAuthenticated",
+        "userInfo",
+        "logout()"
+      ],
+      "rendering_rules": {
+        "logged_in": {
+          "display_elements": [
+            "Logo/branding (left)",
+            "Menu items (center): 首页, 仪表盘",
+            "User menu (right): username dropdown with '退出' option"
+          ],
+          "behavior": "Click logout → call logout() → redirect to /login"
+        },
+        "logged_out": {
+          "display_elements": [
+            "Logo/branding (left)",
+            "Menu items (center): 首页",
+            "Login button (right)"
+          ],
+          "behavior": "Click login → navigate to /login"
+        }
+      },
+      "styling": {
+        "container": "bg-white border-b border-gray-200 shadow-sm fixed top-0 left-0 right-0 z-50",
+        "height": "h-16",
+        "inner_container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between"
+      }
+    },
+    
+    "UserMenu": {
+      "summary": "Dropdown menu showing user information and logout option",
+      "triggers": {
+        "avatar_click": "Opens/closes dropdown menu",
+        "logout_click": "Calls logout() from AuthContext"
+      },
+      "display_items": [
+        "User name/email",
+        "Divider",
+        "'退出' (Logout) button"
+      ],
+      "styling": {
+        "dropdown": "absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50",
+        "user_info": "px-4 py-2 text-sm text-gray-700 border-b border-gray-200",
+        "logout_button": "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+      }
+    },
+    
+    "ScriptEditorButton": {
+      "summary": "Button to toggle script editor panel visibility",
+      "location": "Dashboard page header, next to 'Column Settings' button",
+      "props": {
+        "onClick": {
+          "type": "function",
+          "description": "Toggles script editor panel open/closed state"
+        }
+      },
+      "label": "自定义脚本",
+      "styling": "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50",
+      "behavior": "Click → toggles script editor panel visibility"
+    },
+    
+    "ScriptEditorPanel": {
+      "summary": "Expandable panel containing script editor interface",
+      "visibility": {
+        "controlled_by": "showScriptEditor state (boolean)",
+        "default": "false (hidden)"
+      },
+      "display_when": "showScriptEditor === true",
+      "components_included": [
+        "Existing ScriptEditor component",
+        "Existing ScriptManager component"
+      ],
+      "layout": "Slide-down or expandable section below dashboard header",
+      "styling": "border-t border-gray-200 bg-white p-6"
+    }
+  },
+  
+  "routing_contracts": {
+    "navigation_links": {
+      "首页": {
+        "path": "/",
+        "description": "Home page route"
+      },
+      "仪表盘": {
+        "path": "/dashboard",
+        "description": "Dashboard page route"
+      }
+    },
+    "authentication_routes": {
+      "login": "/login",
+      "logout_action": "Calls AuthContext.logout() then redirects to /login"
+    }
+  },
+  
+  "styling_contracts": {
+    "color_palette": {
+      "backgrounds": {
+        "page": "bg-gray-100",
+        "card": "bg-white",
+        "navigation": "bg-white"
+      },
+      "text": {
+        "primary": "text-gray-900",
+        "secondary": "text-gray-500",
+        "accent": "text-blue-600"
+      },
+      "borders": {
+        "default": "border-gray-200",
+        "focus": "border-blue-500"
+      },
+      "interactive": {
+        "hover": "hover:bg-gray-50",
+        "active": "bg-blue-50",
+        "disabled": "opacity-50 cursor-not-allowed"
+      }
+    },
+    "spacing": {
+      "page_padding": "px-4 sm:px-6 lg:px-8",
+      "section_padding": "py-6",
+      "card_padding": "p-6",
+      "navigation_height": "h-16"
+    },
+    "typography": {
+      "heading": "text-2xl font-bold text-gray-900",
+      "subheading": "text-sm text-gray-500",
+      "body": "text-sm text-gray-900",
+      "link": "text-blue-600 hover:text-blue-800"
+    },
+    "responsive_breakpoints": {
+      "mobile": "sm: (640px)",
+      "tablet": "md: (768px)",
+      "desktop": "lg: (1024px)",
+      "wide": "xl: (1280px)"
+    }
+  },
+  
+  "interaction_patterns": {
+    "navigation_menu": {
+      "hover_state": "hover:bg-gray-100",
+      "active_state": "bg-blue-50 text-blue-700",
+      "transition": "transition-colors duration-150"
+    },
+    "user_menu_dropdown": {
+      "trigger": "Click avatar/username",
+      "visibility": "Toggle on click, close on outside click",
+      "animation": "Fade in/out with scale effect"
+    },
+    "script_editor_panel": {
+      "toggle": "Smooth slide-down animation",
+      "scroll": "Panel content scrollable if exceeds height"
+    },
+    "buttons": {
+      "default": "cursor-pointer transition-colors duration-150",
+      "hover": "hover:bg-gray-100 hover:border-gray-400",
+      "active": "active:bg-gray-200",
+      "focus": "focus:outline-none focus:ring-2 focus:ring-blue-500"
+    }
+  },
+  
+  "authentication_integration": {
+    "auth_context_usage": {
+      "read_state": {
+        "isAuthenticated": "Boolean - whether user is logged in",
+        "userInfo": "Object - current user information"
+      },
+      "available_actions": {
+        "logout": "Function - handles logout and navigation to /login"
+      }
+    },
+    "conditional_rendering": {
+      "logged_in": "Show username + user menu + logout option",
+      "logged_out": "Show login button"
+    },
+    "protected_routes": {
+      "dashboard": "Requires authentication, redirect to /login if not authenticated",
+      "home": "Public, no authentication required"
+    }
+  },
+  
+  "accessibility_requirements": {
+    "keyboard_navigation": {
+      "navigation_links": "Accessible via Tab key",
+      "user_menu": "Enter to open, Escape to close",
+      "dropdown_menu": "Arrow keys to navigate options"
+    },
+    "screen_reader": {
+      "aria_labels": "Required for all interactive elements",
+      "role_attributes": "menu, menuitem, button where appropriate"
+    },
+    "focus_management": {
+      "focus_visible": "Clear focus indicators for keyboard users",
+      "focus_trap": "User menu dropdown traps focus"
+    }
+  },
+  
+  "performance_constraints": {
+    "navigation_bar": {
+      "render_time": "< 10ms",
+      "re_renders": "Only on auth state change",
+      "memory": "Minimal state, read-only from context"
+    },
+    "script_editor_panel": {
+      "toggle_animation": "300ms ease-in-out",
+      "lazy_load": "Load ScriptEditor component only when panel opens",
+      "state_persistence": "Save to localStorage for persistence"
+    }
+  },
+  
+  "error_handling": {
+    "authentication_errors": {
+      "logout_failure": "Show error message, keep user logged in",
+      "context_unavailable": "Graceful fallback to logged out state"
+    },
+    "navigation_errors": {
+      "route_not_found": "Display 404 page",
+      "protected_route_access": "Redirect to login with message"
+    },
+    "ui_errors": {
+      "component_render_failure": "Show fallback UI, log error",
+      "script_editor_load_error": "Show error message in panel"
+    }
+  }
+}
+

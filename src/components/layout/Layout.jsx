@@ -2,17 +2,10 @@ import React from 'react';
 
 const Layout = ({ title, children, showHeader = true }) => {
   return (
-    <div style={{ maxWidth: '800px', margin: '50px auto', padding: '20px' }}>
+    <div className="max-w-3xl mx-auto px-4 py-12">
       {showHeader && (
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '30px',
-          paddingBottom: '10px',
-          borderBottom: '1px solid #ddd',
-        }}>
-          <h1 style={{ color: '#333', margin: '0' }}>{title || 'QTFund'}</h1>
+        <div className="flex justify-between items-center mb-8 pb-4 border-b border-gray-200">
+          <h1 className="text-3xl font-bold text-gray-900 m-0">{title || 'QTFund'}</h1>
         </div>
       )}
       {children}
