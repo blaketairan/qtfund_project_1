@@ -2,7 +2,7 @@
 
 echo "Checking QTFund Frontend health..."
 
-WEBPACK_PROCESS=$(pgrep -f "webpack.*serve")
+WEBPACK_PROCESS=$(pgrep -f "webpack")
 if [ -z "$WEBPACK_PROCESS" ]; then
     echo "✗ Application is not running"
     exit 1
