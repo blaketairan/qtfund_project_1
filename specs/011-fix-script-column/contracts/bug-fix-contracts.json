@@ -1,0 +1,53 @@
+{
+  "title": "Bug Fix: Script Column Name Display",
+  "version": "1.0.0",
+  "date": "2025-01-27",
+  "feature": "011-fix-script-column",
+  "description": "API contracts remain unchanged - this is a frontend-only bug fix",
+  
+  "note": "No backend API changes needed. Frontend receives same response structure as before.",
+  
+  "existing_api": {
+    "GET /api/stock-price/list": {
+      "description": "Returns stocks with optional script results (may contain null values)",
+      "response_structure_unchanged": true
+    },
+    "GET /api/custom-calculations/scripts": {
+      "description": "Returns script library data",
+      "response_structure_unchanged": true
+    }
+  },
+  
+  "frontend_changes": {
+    "component_props": {
+      "StockTable": {
+        "new_prop": "scriptLibrary",
+        "type": "Array<{id: number, name: string, description: string, code: string}>",
+        "description": "Script library data for column name lookup"
+      }
+    },
+    "data_flow": {
+      "source": "Backend API (GET /api/custom-calculations/scripts)",
+      "storage": "React component state in DashboardPage",
+      "destination": "StockTable via props"
+    }
+  },
+  
+  "bug_manifestation": {
+    "when": "Backend returns script_results with null values",
+    "example": {
+      "script_results": {
+        "2": null
+      }
+    },
+    "behavior": "Column header shows 'Custom' instead of actual script name",
+    "expected": "Column header shows script's name from library"
+  },
+  
+  "fix_details": {
+    "approach": "Fetch script names from library data instead of API response",
+    "changes": "Add scriptLibrary prop to StockTable, modify column name extraction logic",
+    "testing": "Select script with null results, verify correct name appears in column header"
+  }
+}
+
