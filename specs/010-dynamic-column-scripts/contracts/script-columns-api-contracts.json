@@ -1,0 +1,199 @@
+{
+  "title": "Dynamic Script Columns API Contracts",
+  "version": "1.0.0",
+  "date": "2025-01-27",
+  "feature": "010-dynamic-column-scripts",
+  "description": "API contract for script-based dynamic columns in stock list queries",
+  
+  "endpoints": {
+    "GET /api/stock-price/list": {
+      "summary": "Fetch stock list with optional script calculations",
+      "description": "Returns stock data with dynamically calculated script columns when script_ids provided",
+      "method": "GET",
+      "queryParameters": {
+        "script_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "required": false,
+          "description": "Array of script IDs to calculate as columns",
+          "example": ["abc-123-uuid", "def-456-uuid"]
+        },
+        "market_code": {
+          "type": "string",
+          "enum": ["SH", "SZ", "BJ"],
+          "required": false,
+          "description": "Filter by market code"
+        },
+        "limit": {
+          "type": "number",
+          "required": false,
+          "default": 200,
+          "description": "Maximum number of records to return"
+        },
+        "offset": {
+          "type": "number",
+          "required": false,
+          "default": 0,
+          "description": "Pagination offset"
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Successful response with stock data and optional script results",
+          "contentType": "application/json",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "number",
+                "example": 200
+              },
+              "data": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/StockWithScriptResults" }
+              }
+            }
+          },
+          "example": {
+            "code": 200,
+            "data": [
+              {
+                "symbol": "SH.600519",
+                "stock_name": "贵州茅台",
+                "close_price": 1623.45,
+                "price_change_pct": 2.34,
+                "volume": 1256789,
+                "market_code": "SH",
+                "script_results": {
+                  "abc-123": {
+                    "result": 0.0012,
+                    "column_name": "Price/Volume Ratio",
+                    "error": false
+                  },
+                  "def-456": {
+                    "result": 1.84,
+                    "column_name": "Momentum",
+                    "error": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "400": {
+          "description": "Bad request (invalid script_ids or parameters)"
+        },
+        "500": {
+          "description": "Server error or script execution error"
+        }
+      }
+    }
+  },
+  
+  "definitions": {
+    "StockWithScriptResults": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "#/definitions/Stock" },
+        {
+          "type": "object",
+          "properties": {
+            "script_results": {
+              "type": "object",
+              "description": "Object mapping script IDs to their calculated results",
+              "additionalProperties": { "$ref": "#/definitions/ScriptResult" }
+            }
+          }
+        }
+      ]
+    },
+    
+    "Stock": {
+      "type": "object",
+      "properties": {
+        "symbol": { "type": "string" },
+        "stock_name": { "type": "string" },
+        "close_price": { "type": "number" },
+        "price_change_pct": { "type": "number" },
+        "volume": { "type": "number" },
+        "market_code": { "type": "string", "enum": ["SH", "SZ", "BJ"] }
+      }
+    },
+    
+    "ScriptResult": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": ["number", "string", "null"],
+          "description": "Calculated result value, or null if calculation failed"
+        },
+        "column_name": {
+          "type": "string",
+          "description": "Display name for this script column"
+        },
+        "error": {
+          "type": "boolean",
+          "description": "Whether calculation failed for this stock"
+        }
+      }
+    }
+  },
+  
+  "business_rules": {
+    "script_calculation_scope": {
+      "description": "Scripts are calculated ONLY for stocks in the query result set",
+      "filter_impact": "If market_code specified, scripts calculate only for that market's stocks",
+      "limit_impact": "If limit=100, scripts calculate only for those 100 stocks",
+      "example": "Query with limit=50 and market_code=SH calculates scripts for only 50 Shanghai stocks"
+    },
+    
+    "error_handling": {
+      "individual_failure": "If script fails for one stock, include error:true in script_result for that stock only",
+      "query_failure": "If entire query fails, return standard error response",
+      "display_rule": "Frontend displays '--' when error:true or result:null"
+    },
+    
+    "performance": {
+      "target_time": "Script calculations should complete within 3 seconds",
+      "timeout": "If calculations take longer than 5 seconds, return partial results or timeout error",
+      "caching": "Backend may cache script results for short period to improve performance"
+    }
+  },
+  
+  "frontend_requirements": {
+    "script_selection_storage": {
+      "location": "localStorage",
+      "key": "dashboard_script_selections",
+      "format": "JSON array of script ID strings"
+    },
+    
+    "query_parameter_format": {
+      "script_ids": "Comma-separated list of UUIDs: ?script_ids=id1,id2,id3",
+      "multiple_params": "Combine with other params: ?script_ids=id1&limit=100&market_code=SH"
+    },
+    
+    "column_display": {
+      "dynamic_columns": "Render script_result objects as additional columns in table",
+      "column_header": "Use column_name from script_result",
+      "cell_value": "Use result value, or '--' if error or null"
+    }
+  },
+  
+  "validation_rules": {
+    "script_ids_parameter": {
+      "required": false,
+      "format": "Comma-separated UUID strings",
+      "max_length": "10 scripts per query",
+      "validation": "All IDs must exist in user's saved scripts"
+    },
+    
+    "response_validation": {
+      "required_fields": ["code", "data"],
+      "script_results": "Optional, present only if script_ids provided",
+      "error_handling": "Must handle missing script_results gracefully"
+    }
+  }
+}
+
