@@ -1,4 +1,4 @@
-const API_BASE = 'http://qtfund.com/api';
+const API_BASE = 'https://qtfund.com/api';
 
 export const fetchStockList = async (options = {}) => {
   const params = new URLSearchParams();
