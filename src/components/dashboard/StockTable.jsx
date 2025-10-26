@@ -173,11 +173,12 @@ const StockTable = ({ visibleColumns, selectedScriptIds = [], scriptLibrary = []
               )}
               {scriptColumns.map(col => {
                 const scriptResult = stock.script_results?.[col.scriptId];
-                const displayValue = scriptResult?.result ?? (scriptResult?.error ? '--' : '--');
-                console.log(`Stock ${stock.symbol} script ${col.scriptId} result:`, scriptResult);
+                const displayValue = typeof scriptResult === 'object' 
+                  ? (scriptResult?.result ?? (scriptResult?.error ? '--' : '--'))
+                  : (scriptResult ?? '--');
                 return (
                   <td key={col.scriptId} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {displayValue}
+                    {typeof displayValue === 'number' ? displayValue.toFixed(4) : displayValue}
                   </td>
                 );
               })}
