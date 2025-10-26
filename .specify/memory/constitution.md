@@ -1,13 +1,14 @@
 <!--
 Sync Impact Report:
-- Version: 0.0.0 → 1.0.0 (Initial establishment)
+- Version: 1.0.0 → 1.1.0 (MINOR: Added Git workflow principle)
 - PROJECT_NAME: qtfund_project_1 Constitution
 - Principles added:
   1. File Structure & Component Organization
   2. Code Clarity & No Comments Policy
   3. Technology Stack Restrictions
-- Sections: Added Technology Stack, Code Quality, Component Development
-- Templates requiring updates: None yet (this is the initial version)
+  4. Git Workflow (Single Branch Development)
+- Sections: Added Git Workflow under Core Principles
+- Templates requiring updates: ⚠ None required (workflow preference, not technical constraint)
 - TODOs: None
 -->
 
@@ -49,7 +50,13 @@ MUST ensure all nested JSX tags are properly closed and structure is valid.
 
 MUST verify nested structure completeness before code delivery.
 
-## Code Quality Standards
+### V. Git Workflow
+
+All code changes MUST be committed directly to the `main` branch.
+
+NO feature branches or pull request workflows permitted.
+
+Changes are committed to main with clear, descriptive commit messages.
 
 JavaScript/JSX code MUST demonstrate clear separation of concerns within component hierarchy.
 
@@ -77,4 +84,4 @@ Amendments require documentation update, version bump, and affected template syn
 
 Complexity violations MUST be justified through explicit trade-off analysis.
 
-**Version**: 1.0.0 | **Ratified**: 2025-01-27 | **Last Amended**: 2025-01-27
+**Version**: 1.1.0 | **Ratified**: 2025-01-27 | **Last Amended**: 2025-01-27
