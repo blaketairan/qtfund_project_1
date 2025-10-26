@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDashboard } from '../../context/DashboardContext.jsx';
 import { fetchStockList } from '../../services/stockService.js';
-import { formatCurrency, formatPercentage } from '../../utils/numberFormat.js';
+import { formatCurrency, formatPercentage, formatVolume } from '../../utils/numberFormat.js';
 
 const StockTable = ({ visibleColumns }) => {
   const { state, dispatch } = useDashboard();
@@ -73,12 +73,12 @@ const StockTable = ({ visibleColumns }) => {
   }
 
   const columns = [
-    { key: 'symbol', label: 'Symbol' },
-    { key: 'stock_name', label: 'Name' },
-    { key: 'close_price', label: 'Price' },
-    { key: 'price_change_pct', label: 'Change %' },
-    { key: 'volume', label: 'Volume' },
-    { key: 'market_code', label: 'Market' },
+    { key: 'symbol', label: '代码' },
+    { key: 'stock_name', label: '名称' },
+    { key: 'close_price', label: '价格' },
+    { key: 'price_change_pct', label: '涨跌幅%' },
+    { key: 'volume', label: '成交量' },
+    { key: 'market_code', label: '市场' },
   ];
 
   return (
@@ -129,7 +129,7 @@ const StockTable = ({ visibleColumns }) => {
               )}
               {visibleColumns.includes('volume') && (
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {stock.volume?.toLocaleString()}
+                  {formatVolume(stock.volume)}
                 </td>
               )}
               {visibleColumns.includes('market_code') && (

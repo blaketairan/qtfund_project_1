@@ -1,0 +1,198 @@
+{
+  "title": "Stock Data Display API Contracts",
+  "version": "1.0.0",
+  "date": "2025-01-27",
+  "feature": "008-stock-data-display",
+  "description": "API contract definitions for stock data display on dashboard",
+  
+  "endpoints": {
+    "GET /api/stock-price/list": {
+      "summary": "Fetch list of stocks with price data",
+      "description": "Returns array of stock objects with all fields needed for dashboard display",
+      "method": "GET",
+      "queryParameters": {
+        "market_code": {
+          "type": "string",
+          "required": false,
+          "enum": ["SH", "SZ", "BJ"],
+          "description": "Filter by market code"
+        },
+        "limit": {
+          "type": "number",
+          "required": false,
+          "default": 200,
+          "description": "Maximum number of records to return"
+        },
+        "offset": {
+          "type": "number",
+          "required": false,
+          "default": 0,
+          "description": "Pagination offset"
+        },
+        "is_active": {
+          "type": "boolean",
+          "required": false,
+          "description": "Filter by active status"
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Successful response with stock data",
+          "contentType": "application/json",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "number",
+                "example": 200,
+                "description": "Response code (200 = success)"
+              },
+              "data": {
+                "oneOf": [
+                  {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/StockDisplay" }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "items": {
+                        "type": "array",
+                        "items": { "$ref": "#/definitions/StockDisplay" }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "required": ["code", "data"]
+          },
+          "example": {
+            "code": 200,
+            "data": [
+              {
+                "symbol": "SH.600519",
+                "stock_name": "贵州茅台",
+                "close_price": 1623.45,
+                "price_change_pct": 2.34,
+                "volume": 1256789,
+                "market_code": "SH"
+              }
+            ]
+          }
+        },
+        "400": {
+          "description": "Bad request (invalid parameters)"
+        },
+        "500": {
+          "description": "Server error"
+        }
+      }
+    }
+  },
+  
+  "definitions": {
+    "StockDisplay": {
+      "type": "object",
+      "required": [
+        "symbol",
+        "stock_name",
+        "close_price",
+        "price_change_pct",
+        "volume",
+        "market_code"
+      ],
+      "properties": {
+        "symbol": {
+          "type": "string",
+          "description": "Stock symbol in format MARKET.CODE",
+          "example": "SH.600519"
+        },
+        "stock_name": {
+          "type": "string",
+          "description": "Stock display name in Chinese",
+          "example": "贵州茅台"
+        },
+        "close_price": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Latest closing price",
+          "example": 1623.45
+        },
+        "price_change_pct": {
+          "type": "number",
+          "description": "Daily price change percentage",
+          "example": 2.34
+        },
+        "volume": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Trading volume in hands",
+          "example": 1256789
+        },
+        "market_code": {
+          "type": "string",
+          "enum": ["SH", "SZ", "BJ"],
+          "description": "Market identifier",
+          "example": "SH"
+        }
+      }
+    }
+  },
+  
+  "frontend_requirements": {
+    "display_rules": {
+      "close_price": {
+        "formatter": "formatCurrency",
+        "decimals": 2,
+        "currency": "CNY",
+        "missing_value": "--"
+      },
+      "price_change_pct": {
+        "formatter": "formatPercentage",
+        "decimals": 2,
+        "color_positive": "text-green-600",
+        "color_negative": "text-red-600",
+        "missing_value": "--"
+      },
+      "volume": {
+        "formatter": "formatVolume",
+        "abbreviations": {
+          "100000000": "亿",
+          "10000": "万"
+        },
+        "missing_value": "--"
+      }
+    },
+    "column_labels": {
+      "symbol": "代码",
+      "stock_name": "名称",
+      "close_price": "价格",
+      "price_change_pct": "涨跌幅%",
+      "volume": "成交量",
+      "market_code": "市场"
+    }
+  },
+  
+  "validation_rules": {
+    "response_structure": {
+      "description": "API response MUST contain code and data fields",
+      "required_fields": ["code", "data"],
+      "data_field": "MUST be array of StockDisplay objects OR object with 'items' property"
+    },
+    "data_completeness": {
+      "description": "Each StockDisplay object MUST have all required fields",
+      "strict": true,
+      "allow_null": false,
+      "missing_field_behavior": "Display '--' for missing numeric fields"
+    }
+  },
+  
+  "error_handling": {
+    "network_failure": "Display error message: 'Failed to load stock data'",
+    "empty_response": "Display: 'No stock data available'",
+    "parse_error": "Display error message: 'Failed to parse data'",
+    "timeout": "Display: 'Request timeout'"
+  }
+}
+
