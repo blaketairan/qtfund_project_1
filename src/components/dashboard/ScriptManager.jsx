@@ -15,8 +15,9 @@ const ScriptManager = ({ selectedScriptIds = [], onScriptSelectionChange }) => {
     setError(null);
     try {
       const response = await getScripts();
-      if (response.code === 200 && response.data.items) {
-        setScripts(response.data.items);
+      if (response.code === 200 && response.data) {
+        const scripts = Array.isArray(response.data) ? response.data : (response.data.items || []);
+        setScripts(scripts);
       }
     } catch (err) {
       setError(err.message);
