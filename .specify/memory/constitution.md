@@ -1,14 +1,16 @@
 <!--
 Sync Impact Report:
-- Version: 1.0.0 → 1.1.0 (MINOR: Added Git workflow principle)
+- Version: 1.1.0 → 1.2.0 (MINOR: Added API contract validation principle)
 - PROJECT_NAME: qtfund_project_1 Constitution
 - Principles added:
   1. File Structure & Component Organization
   2. Code Clarity & No Comments Policy
   3. Technology Stack Restrictions
-  4. Git Workflow (Single Branch Development)
-- Sections: Added Git Workflow under Core Principles
-- Templates requiring updates: ⚠ None required (workflow preference, not technical constraint)
+  4. JSX Tag Validation
+  5. Git Workflow (Single Branch Development)
+  6. API Contract Validation
+- Sections: Added API Contract Validation under Core Principles
+- Templates requiring updates: ⚠ None required (process improvement, not breaking change)
 - TODOs: None
 -->
 
@@ -58,7 +60,17 @@ NO feature branches or pull request workflows permitted.
 
 Changes are committed to main with clear, descriptive commit messages.
 
-JavaScript/JSX code MUST demonstrate clear separation of concerns within component hierarchy.
+### VI. API Contract Validation
+
+API service calls MUST validate actual backend response structure before processing data.
+
+Frontend code MUST handle response format mismatches gracefully - must check both expected paths (e.g., `data` vs `data.items`) when contract is ambiguous.
+
+API contract documentation MUST include complete real response examples, not just schemas - actual backend responses take precedence over documented structure.
+
+When backend response format differs from contract, code MUST be updated to match actual structure, not assumed structure.
+
+**Version**: 1.2.0 | **Ratified**: 2025-01-27 | **Last Amended**: 2025-01-27
 
 Entity definitions in `entities/` MUST contain complete JSON schema without abbreviation.
 
@@ -83,5 +95,3 @@ All PRs and reviews MUST verify compliance with file structure, code clarity, an
 Amendments require documentation update, version bump, and affected template synchronization.
 
 Complexity violations MUST be justified through explicit trade-off analysis.
-
-**Version**: 1.1.0 | **Ratified**: 2025-01-27 | **Last Amended**: 2025-01-27
