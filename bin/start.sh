@@ -26,7 +26,7 @@ fi
 PORT_CHECK=$(lsof -i :3000 2>/dev/null)
 if [ -n "$PORT_CHECK" ]; then
     echo "Warning: Port 3000 is already in use"
-    pgrep -f "webpack.*serve" >/dev/null
+    pgrep -f "webpack" >/dev/null
     if [ $? -eq 0 ]; then
         echo "Application is already running"
         exit 0
@@ -36,7 +36,7 @@ if [ -n "$PORT_CHECK" ]; then
     fi
 fi
 
-WEBPACK_PROCESS=$(pgrep -f "webpack.*serve")
+WEBPACK_PROCESS=$(pgrep -f "webpack")
 if [ -n "$WEBPACK_PROCESS" ]; then
     echo "Webpack dev server is already running (PID: $WEBPACK_PROCESS)"
     exit 0
@@ -48,7 +48,7 @@ WEBPACK_PID=$!
 
 sleep 3
 
-if pgrep -f "webpack.*serve" >/dev/null; then
+if pgrep -f "webpack" >/dev/null; then
     echo "✓ Application started successfully"
     echo "PID: $WEBPACK_PID"
     echo "Access at: http://localhost:3000"
