@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = 'http://qtfund.com/api';
 
 export const createScript = async (script) => {
   const response = await fetch(`${API_BASE}/custom-calculations/scripts`, {

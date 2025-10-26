@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = 'http://qtfund.com/api';
 
 export const executeScript = async (scriptConfig) => {
   const { script, script_id, column_name, stock_symbols } = scriptConfig;
