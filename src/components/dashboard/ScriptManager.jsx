@@ -15,11 +15,16 @@ const ScriptManager = ({ selectedScriptIds = [], onScriptSelectionChange }) => {
     setError(null);
     try {
       const response = await getScripts();
+      console.log('ScriptManager: API response:', response);
       if (response.code === 200 && response.data) {
         const scripts = Array.isArray(response.data) ? response.data : (response.data.items || []);
+        console.log('ScriptManager: Parsed scripts:', scripts);
         setScripts(scripts);
+      } else {
+        console.log('ScriptManager: Invalid response structure');
       }
     } catch (err) {
+      console.error('ScriptManager: Error loading scripts:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -52,6 +57,8 @@ const ScriptManager = ({ selectedScriptIds = [], onScriptSelectionChange }) => {
       onScriptSelectionChange(updated);
     }
   };
+
+  console.log('ScriptManager render:', { scripts, loading, error, scriptsLength: scripts.length });
 
   if (loading) {
     return <div className="p-4 text-center">Loading scripts...</div>;
