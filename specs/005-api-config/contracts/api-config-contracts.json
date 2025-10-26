@@ -1,0 +1,91 @@
+{
+  "feature": "005-api-config",
+  "type": "configuration_contracts",
+  "created": "2025-01-27",
+  "description": "Contracts for centralized API configuration management",
+  "contracts": {
+    "config_file": {
+      "location": "src/config/apiConfig.js",
+      "purpose": "Centralized API configuration management",
+      "exports": {
+        "API_CONFIG": {
+          "type": "object",
+          "fields": {
+            "environment": {
+              "type": "string",
+              "values": ["development", "production"],
+              "default": "production"
+            },
+            "protocol": {
+              "type": "string",
+              "values": ["http", "https"],
+              "default": "https"
+            },
+            "baseUrl": {
+              "type": "string",
+              "description": "Domain name without protocol",
+              "example": "qtfund.com"
+            },
+            "apiPath": {
+              "type": "string",
+              "description": "Base path for API endpoints",
+              "default": "/api"
+            }
+          }
+        },
+        "getApiBaseUrl": {
+          "type": "function",
+          "returns": "string",
+          "description": "Returns full base URL: {protocol}://{baseUrl}{apiPath}"
+        }
+      }
+    },
+    "service_imports": {
+      "description": "How service files import and use the configuration",
+      "pattern": "import { getApiBaseUrl } from '../config/apiConfig.js'; const API_BASE = getApiBaseUrl();",
+      "affected_files": [
+        "src/services/stockService.js",
+        "src/services/scriptService.js",
+        "src/services/scriptStorageService.js",
+        "src/utils/constants.js"
+      ]
+    },
+    "endpoint_construction": {
+      "description": "How full API URLs are constructed from base config",
+      "pattern": "{baseUrl}/{endpoint_path}",
+      "example": "fetch(`${API_BASE}/stock-price/list`)",
+      "components": [
+        "baseUrl from config: https://qtfund.com/api",
+        "endpoint path: /stock-price/list",
+        "full URL: https://qtfund.com/api/stock-price/list"
+      ]
+    }
+  },
+  "validation_rules": {
+    "protocol": {
+      "allowed": ["http", "https"],
+      "default": "https",
+      "required": true
+    },
+    "baseUrl": {
+      "pattern": "valid domain name (no protocol, no path)",
+      "required": true,
+      "cannot_be_empty": true
+    },
+    "apiPath": {
+      "must_start_with": "/",
+      "default": "/api",
+      "required": true
+    },
+    "environment": {
+      "allowed": ["development", "production"],
+      "determined_by": "process.env.NODE_ENV"
+    }
+  },
+  "error_handling": {
+    "missing_config": "Use default production configuration with https protocol",
+    "invalid_protocol": "Default to https if invalid protocol specified",
+    "empty_baseUrl": "Throw descriptive error message"
+  }
+}
+
