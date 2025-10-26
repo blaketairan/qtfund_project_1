@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getScripts, createScript, updateScript, deleteScript } from '../../services/scriptStorageService.js';
 
-const ScriptManager = () => {
+const ScriptManager = ({ selectedScriptIds = [], onScriptSelectionChange }) => {
   const [scripts, setScripts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,8 +29,26 @@ const ScriptManager = () => {
     try {
       await deleteScript(id);
       loadScripts();
+      
+      if (selectedScriptIds.includes(id)) {
+        const updated = selectedScriptIds.filter(sid => sid !== id);
+        if (onScriptSelectionChange) {
+          onScriptSelectionChange(updated);
+        }
+      }
     } catch (err) {
       setError(err.message);
+    }
+  };
+
+  const handleToggleSelection = (id) => {
+    const isSelected = selectedScriptIds.includes(id);
+    const updated = isSelected
+      ? selectedScriptIds.filter(sid => sid !== id)
+      : [...selectedScriptIds, id];
+    
+    if (onScriptSelectionChange) {
+      onScriptSelectionChange(updated);
     }
   };
 
@@ -53,12 +71,20 @@ const ScriptManager = () => {
       ) : (
         <div className="space-y-2">
           {scripts.map(script => (
-            <div key={script.id} className="flex justify-between items-center p-3 border border-gray-200 rounded-md">
-              <div>
-                <div className="font-medium text-gray-900">{script.name}</div>
-                {script.description && (
-                  <div className="text-sm text-gray-500">{script.description}</div>
-                )}
+            <div key={script.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-md">
+              <div className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  checked={selectedScriptIds.includes(script.id)}
+                  onChange={() => handleToggleSelection(script.id)}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <div>
+                  <div className="font-medium text-gray-900">{script.name}</div>
+                  {script.description && (
+                    <div className="text-sm text-gray-500">{script.description}</div>
+                  )}
+                </div>
               </div>
               <button
                 onClick={() => handleDelete(script.id)}

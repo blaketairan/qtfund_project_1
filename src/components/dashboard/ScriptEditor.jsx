@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
 import { executeScript, validateScript } from '../../services/scriptService.js';
+import { createScript } from '../../services/scriptStorageService.js';
 
-const ScriptEditor = ({ onScriptExecuted }) => {
+const ScriptEditor = ({ onScriptSaved }) => {
   const [script, setScript] = useState('');
-  const [columnName, setColumnName] = useState('');
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handleExecute = async () => {
+  const handleSave = async () => {
     setError(null);
     setLoading(true);
     
+    if (!name.trim()) {
+      setError('Please enter a script name');
+      setLoading(false);
+      return;
+    }
+
     const validation = validateScript(script);
     if (!validation.valid) {
       setError(validation.error);
@@ -19,16 +27,21 @@ const ScriptEditor = ({ onScriptExecuted }) => {
     }
 
     try {
-      const response = await executeScript({
-        script,
-        column_name: columnName || 'Custom Column',
-        stock_symbols: []
+      const response = await createScript({
+        name,
+        description: description || name,
+        code: script
       });
       
-      if (response.code === 200) {
-        onScriptExecuted(response.data);
+      if (response.code === 200 || response.code === 201) {
+        setName('');
+        setDescription('');
+        setScript('');
+        if (onScriptSaved) {
+          onScriptSaved();
+        }
       } else {
-        setError(response.message || 'Script execution failed');
+        setError(response.message || 'Failed to save script');
       }
     } catch (err) {
       setError(err.message);
@@ -44,13 +57,26 @@ const ScriptEditor = ({ onScriptExecuted }) => {
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Column Name
+            Script Name
           </label>
           <input
             type="text"
-            value={columnName}
-            onChange={(e) => setColumnName(e.target.value)}
-            placeholder="Enter column name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter script name"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Description (Optional)
+          </label>
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Enter description"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -75,11 +101,11 @@ const ScriptEditor = ({ onScriptExecuted }) => {
         )}
         
         <button
-          onClick={handleExecute}
+          onClick={handleSave}
           disabled={loading}
           className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
         >
-          {loading ? 'Executing...' : 'Execute Script'}
+          {loading ? 'Saving...' : 'Save Script'}
         </button>
       </div>
     </div>

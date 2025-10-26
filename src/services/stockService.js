@@ -8,6 +8,9 @@ export const fetchStockList = async (options = {}) => {
   if (options.is_active !== undefined) params.append('is_active', options.is_active);
   if (options.limit) params.append('limit', options.limit);
   if (options.offset) params.append('offset', options.offset);
+  if (options.script_ids && options.script_ids.length > 0) {
+    params.append('script_ids', options.script_ids.join(','));
+  }
 
   const response = await fetch(`${API_BASE}/stock-price/list?${params}`);
   const data = await response.json();

@@ -3,7 +3,7 @@ import { useDashboard } from '../../context/DashboardContext.jsx';
 import { fetchStockList } from '../../services/stockService.js';
 import { formatCurrency, formatPercentage, formatVolume } from '../../utils/numberFormat.js';
 
-const StockTable = ({ visibleColumns }) => {
+const StockTable = ({ visibleColumns, selectedScriptIds = [] }) => {
   const { state, dispatch } = useDashboard();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,13 +12,17 @@ const StockTable = ({ visibleColumns }) => {
 
   useEffect(() => {
     loadStocks();
-  }, []);
+  }, [selectedScriptIds]);
 
   const loadStocks = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetchStockList({ limit: 200 });
+      const options = { limit: 200 };
+      if (selectedScriptIds && selectedScriptIds.length > 0) {
+        options.script_ids = selectedScriptIds;
+      }
+      const response = await fetchStockList(options);
       if (response.code === 200 && response.data) {
         const items = Array.isArray(response.data) 
           ? response.data 
@@ -81,6 +85,20 @@ const StockTable = ({ visibleColumns }) => {
     { key: 'market_code', label: '市场' },
   ];
 
+  const getScriptColumns = () => {
+    if (!sortedStocks || sortedStocks.length === 0) return [];
+    
+    const firstStock = sortedStocks[0];
+    if (!firstStock?.script_results) return [];
+    
+    return Object.keys(firstStock.script_results).map(scriptId => ({
+      scriptId,
+      columnName: firstStock.script_results[scriptId]?.column_name || 'Custom'
+    }));
+  };
+
+  const scriptColumns = getScriptColumns();
+
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200">
@@ -99,6 +117,14 @@ const StockTable = ({ visibleColumns }) => {
                   )}
                 </th>
               )
+            ))}
+            {scriptColumns.map(col => (
+              <th
+                key={col.scriptId}
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                {col.columnName}
+              </th>
             ))}
           </tr>
         </thead>
@@ -137,6 +163,15 @@ const StockTable = ({ visibleColumns }) => {
                   {stock.market_code}
                 </td>
               )}
+              {scriptColumns.map(col => {
+                const scriptResult = stock.script_results?.[col.scriptId];
+                const displayValue = scriptResult?.result ?? (scriptResult?.error ? '--' : '--');
+                return (
+                  <td key={col.scriptId} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {displayValue}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>

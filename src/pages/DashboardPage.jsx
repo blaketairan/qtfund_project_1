@@ -22,6 +22,7 @@ const DashboardPage = () => {
   const [showScriptEditor, setShowScriptEditor] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMarkets, setSelectedMarkets] = useState(['SH', 'SZ', 'BJ']);
+  const [selectedScriptIds, setSelectedScriptIds] = useState([]);
 
   useEffect(() => {
     const filtered = state.stocks.filter(stock => {
@@ -46,6 +47,16 @@ const DashboardPage = () => {
         setVisibleColumns(visible);
       } catch (err) {
         console.error('Failed to load column configuration:', err);
+      }
+    }
+
+    const savedScriptIds = localStorage.getItem('dashboard_script_selections');
+    if (savedScriptIds) {
+      try {
+        const scriptIds = JSON.parse(savedScriptIds);
+        setSelectedScriptIds(scriptIds);
+      } catch (err) {
+        console.error('Failed to load script selections:', err);
       }
     }
   }, []);
@@ -93,12 +104,18 @@ const DashboardPage = () => {
             <div className="p-6 border-b border-gray-200">
               <div className="space-y-6">
                 <ScriptEditor />
-                <ScriptManager />
+                <ScriptManager 
+                  selectedScriptIds={selectedScriptIds}
+                  onScriptSelectionChange={(scriptIds) => {
+                    setSelectedScriptIds(scriptIds);
+                    localStorage.setItem('dashboard_script_selections', JSON.stringify(scriptIds));
+                  }}
+                />
               </div>
             </div>
           )}
           <div className="p-6">
-            <StockTable visibleColumns={visibleColumns} />
+            <StockTable visibleColumns={visibleColumns} selectedScriptIds={selectedScriptIds} />
           </div>
         </div>
       </div>

@@ -39,9 +39,9 @@ Integration & Testing (Phase 4)
 
 **Goal**: Add infrastructure for tracking selected script IDs and persisting selections.
 
-- [ ] T001 Add selectedScriptIds state management in DashboardPage.jsx
-- [ ] T002 Load selected script IDs from localStorage on mount in DashboardPage.jsx
-- [ ] T003 Save selected script IDs to localStorage on change in DashboardPage.jsx
+- [X] T001 Add selectedScriptIds state management in DashboardPage.jsx
+- [X] T002 Load selected script IDs from localStorage on mount in DashboardPage.jsx
+- [X] T003 Save selected script IDs to localStorage on change in DashboardPage.jsx
 
 ### Phase 2: User Story 1 - Save Scripts Without Execution [US1]
 
@@ -49,8 +49,8 @@ Integration & Testing (Phase 4)
 
 **Independent Test**: Users can create a script, save it, and see it in their script library without triggering expensive calculations.
 
-- [ ] T004 [US1] Remove immediate script execution on save in ScriptEditor.jsx
-- [ ] T005 [US1] Verify script save only stores script data without calling execute API
+- [X] T004 [US1] Remove immediate script execution on save in ScriptEditor.jsx
+- [X] T005 [US1] Verify script save only stores script data without calling execute API
 - [ ] T006 [US1] Test that saved scripts appear in ScriptManager without triggering calculations
 
 ### Phase 3: User Story 2 - Select Scripts for Column Display [US2]
@@ -59,10 +59,10 @@ Integration & Testing (Phase 4)
 
 **Independent Test**: Users can view their saved scripts, check/uncheck which ones to apply, and see those columns appear/disappear in the stock table.
 
-- [ ] T007 [P] [US2] Add checkbox UI for script selection in ScriptManager.jsx
-- [ ] T008 [P] [US2] Wire checkbox changes to selectedScriptIds state in DashboardPage.jsx
-- [ ] T009 [US2] Persist script selection changes to localStorage immediately
-- [ ] T010 [US2] Display visual indication of selected vs unselected scripts in ScriptManager.jsx
+- [X] T007 [P] [US2] Add checkbox UI for script selection in ScriptManager.jsx
+- [X] T008 [P] [US2] Wire checkbox changes to selectedScriptIds state in DashboardPage.jsx
+- [X] T009 [US2] Persist script selection changes to localStorage immediately
+- [X] T010 [US2] Display visual indication of selected vs unselected scripts in ScriptManager.jsx
 
 ### Phase 4: User Story 3 - View Script Results as Columns [US3]
 
@@ -70,13 +70,13 @@ Integration & Testing (Phase 4)
 
 **Independent Test**: Users select a script to display, query the stock list (e.g., first 100 stocks), and see calculated results for only those stocks as a new column.
 
-- [ ] T011 [P] [US3] Modify fetchStockList to accept script_ids parameter in stockService.js
-- [ ] T012 [P] [US3] Add script_ids to query parameters when building API request in stockService.js
-- [ ] T013 [US3] Extract script_results from API response in StockTable.jsx
-- [ ] T014 [US3] Render dynamic script columns based on script_results in StockTable.jsx
-- [ ] T015 [US3] Display "--" for missing or error script results in StockTable.jsx
-- [ ] T016 [US3] Pass selectedScriptIds to StockTable component in DashboardPage.jsx
-- [ ] T017 [US3] Update loadStocks to include selectedScriptIds in StockTable.jsx
+- [X] T011 [P] [US3] Modify fetchStockList to accept script_ids parameter in stockService.js
+- [X] T012 [P] [US3] Add script_ids to query parameters when building API request in stockService.js
+- [X] T013 [US3] Extract script_results from API response in StockTable.jsx
+- [X] T014 [US3] Render dynamic script columns based on script_results in StockTable.jsx
+- [X] T015 [US3] Display "--" for missing or error script results in StockTable.jsx
+- [X] T016 [US3] Pass selectedScriptIds to StockTable component in DashboardPage.jsx
+- [X] T017 [US3] Update loadStocks to include selectedScriptIds in StockTable.jsx
 
 ### Phase 5: Integration & Testing
 
