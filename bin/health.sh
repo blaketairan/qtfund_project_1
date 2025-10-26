@@ -2,13 +2,13 @@
 
 echo "Checking QTFund Frontend health..."
 
-WEBPACK_PROCESS=$(pgrep -f "webpack")
-if [ -z "$WEBPACK_PROCESS" ]; then
+SERVER_PROCESS=$(pgrep -f "webpack|serve|http.server")
+if [ -z "$SERVER_PROCESS" ]; then
     echo "✗ Application is not running"
     exit 1
 fi
 
-echo "✓ Process is running (PID: $WEBPACK_PROCESS)"
+echo "✓ Process is running (PID: $SERVER_PROCESS)"
 
 PORT_CHECK=$(lsof -i :3000 2>/dev/null)
 if [ -z "$PORT_CHECK" ]; then

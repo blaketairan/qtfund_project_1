@@ -2,25 +2,27 @@
 
 echo "Stopping QTFund Frontend..."
 
-WEBPACK_PROCESS=$(pgrep -f "webpack")
+WEBPACK_PROCESS=$(pgrep -f "webpack|serve|http.server")
 if [ -z "$WEBPACK_PROCESS" ]; then
     echo "Application is already stopped"
     exit 0
 fi
 
-echo "Found webpack process (PID: $WEBPACK_PROCESS)"
+echo "Found application process (PID: $WEBPACK_PROCESS)"
 echo "Sending TERM signal..."
 kill -TERM $WEBPACK_PROCESS 2>/dev/null
 
 sleep 2
 
-if pgrep -f "webpack" >/dev/null; then
+if pgrep -f "webpack|serve|http.server" >/dev/null; then
     echo "Process still running, sending KILL signal..."
-    kill -KILL $WEBPACK_PROCESS 2>/dev/null
+    pkill -f webpack
+    pkill -f "serve"
+    pkill -f "http.server"
     sleep 1
 fi
 
-if pgrep -f "webpack" >/dev/null; then
+if pgrep -f "webpack|serve|http.server" >/dev/null; then
     echo "✗ Failed to stop application"
     exit 1
 fi
