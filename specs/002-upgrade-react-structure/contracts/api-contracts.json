@@ -1,0 +1,124 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "QTFund Frontend API Contracts",
+  "description": "API contracts maintained during React upgrade",
+  "contracts": {
+    "authentication": {
+      "login": {
+        "endpoint": "/api/auth/login",
+        "method": "POST",
+        "request": {
+          "type": "object",
+          "required": ["username", "password"],
+          "properties": {
+            "username": {
+              "type": "string",
+              "description": "User login username"
+            },
+            "password": {
+              "type": "string",
+              "description": "User login password"
+            },
+            "use_cookie": {
+              "type": "boolean",
+              "description": "Whether to use cookie-based authentication",
+              "default": true
+            }
+          }
+        },
+        "response_success": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "const": true
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "response_error": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "maintained_during_upgrade": true,
+        "notes": "Authentication credentials via POST with cookie support"
+      },
+      "logout": {
+        "endpoint": "/api/auth/logout",
+        "method": "POST",
+        "request": {
+          "type": "object",
+          "properties": {}
+        },
+        "response": {
+          "type": "object"
+        },
+        "maintained_during_upgrade": true,
+        "notes": "Clears authentication session cookie"
+      }
+    },
+    "user_data": {
+      "get_users": {
+        "endpoint": "/api/users",
+        "method": "GET",
+        "request": {
+          "type": "object",
+          "properties": {}
+        },
+        "response_success": {
+          "type": "object",
+          "properties": {
+            "users": {
+              "type": "array"
+            }
+          },
+          "additionalProperties": true
+        },
+        "response_error": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          }
+        },
+        "maintained_during_upgrade": true,
+        "notes": "Protected endpoint - requires authentication cookie"
+      }
+    }
+  },
+  "implementation_requirements": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "cookie_management": {
+      "description": "Cookies set by backend automatically",
+      "session_key": "session_id",
+      "handling": "automatic via fetch API"
+    },
+    "error_handling": {
+      "network_errors": "Display user-friendly error messages",
+      "api_errors": "Show error message from response",
+      "timeout": "Set to 30 seconds default"
+    }
+  },
+  "upgrade_notes": {
+    "maintained_aspects": [
+      "All API endpoints unchanged",
+      "Request/response formats identical",
+      "Cookie handling behavior preserved",
+      "Error handling patterns maintained"
+    ],
+    "changes": "None - only internal structure changes",
+    "testing": "Verify each API call works identically after upgrade"
+  }
+}
+

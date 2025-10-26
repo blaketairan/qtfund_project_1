@@ -8,13 +8,24 @@
     "build": "webpack --mode production",
     "dev": "webpack serve --mode development --port 3000 --hot"
   },
-  "keywords": ["frontend", "qtfund"],
+  "keywords": [
+    "frontend",
+    "qtfund"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.28.5",
+    "@babel/preset-react": "^7.28.5",
+    "babel-loader": "^10.0.0",
+    "html-webpack-plugin": "^5.5.3",
     "webpack": "^5.88.0",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1",
-    "html-webpack-plugin": "^5.5.3"
+    "webpack-dev-server": "^4.15.1"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.4"
   }
 }

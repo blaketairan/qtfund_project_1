@@ -1,0 +1,144 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Operation Scripts Contracts",
+  "description": "Contracts for shell script operations",
+  "scripts": {
+    "setup": {
+      "name": "setup.sh",
+      "location": "bin/setup.sh",
+      "purpose": "Install dependencies and prepare development environment",
+      "inputs": [],
+      "outputs": {
+        "success": {
+          "exitCode": 0,
+          "message": "Environment setup complete",
+          "includesVersionInfo": true
+        },
+        "failure": {
+          "exitCode": 1,
+          "message": "Setup failed",
+          "includesError": true
+        }
+      },
+      "conditions": {
+        "nodeInstalled": "Node.js must be installed",
+        "npmInstalled": "npm must be installed",
+        "packageJsonExists": "package.json must exist"
+      },
+      "steps": [
+        "Check Node.js and npm versions",
+        "Verify package.json exists",
+        "Install dependencies via npm install",
+        "Verify installation success"
+      ]
+    },
+    "start": {
+      "name": "start.sh",
+      "location": "bin/start.sh",
+      "purpose": "Start webpack development server",
+      "inputs": [],
+      "outputs": {
+        "success": {
+          "exitCode": 0,
+          "message": "Application started successfully",
+          "includesPid": true
+        },
+        "failure": {
+          "exitCode": 1,
+          "message": "Failed to start application",
+          "includesError": true
+        }
+      },
+      "conditions": {
+        "portAvailable": "Port 3000 must be available",
+        "processNotRunning": "No existing webpack process",
+        "npmAvailable": "npm command must be available"
+      }
+    },
+    "health": {
+      "name": "health.sh",
+      "location": "bin/health.sh",
+      "purpose": "Check application health status",
+      "inputs": [],
+      "outputs": {
+        "healthy": {
+          "exitCode": 0,
+          "message": "Application is healthy",
+          "includesHttpStatus": true
+        },
+        "unhealthy": {
+          "exitCode": 1,
+          "message": "Application is not healthy",
+          "includesReason": true
+        }
+      },
+      "checks": [
+        "Process is running",
+        "Port is listening",
+        "HTTP response is 200"
+      ]
+    },
+    "stop": {
+      "name": "stop.sh",
+      "location": "bin/stop.sh",
+      "purpose": "Stop webpack development server",
+      "inputs": [],
+      "outputs": {
+        "success": {
+          "exitCode": 0,
+          "message": "Application stopped successfully",
+          "includesVerification": true
+        },
+        "alreadyStopped": {
+          "exitCode": 0,
+          "message": "Application already stopped",
+          "infoOnly": true
+        },
+        "failure": {
+          "exitCode": 1,
+          "message": "Failed to stop application",
+          "includesError": true
+        }
+      },
+      "sequence": [
+        "Send TERM signal",
+        "Wait 2 seconds",
+        "Send KILL signal if needed",
+        "Verify port released"
+      ]
+    }
+  },
+  "platform_requirements": {
+    "linux": {
+      "bashVersion": "3.2+",
+      "requiredCommands": ["bash", "node", "npm", "pgrep", "pkill", "lsof", "curl"],
+      "testedDistros": ["Ubuntu 20.04+", "Debian 10+", "CentOS 7+"]
+    },
+    "macos": {
+      "bashVersion": "3.2+",
+      "requiredCommands": ["bash", "node", "npm", "pgrep", "pkill", "lsof", "curl"],
+      "testedVersions": ["macOS 10.12+"]
+    }
+  },
+  "environment_requirements": {
+    "nodeVersion": "18.0.0+",
+    "npmVersion": "8.0.0+",
+    "webpackServer": "webpack-dev-server 4.15.0+"
+  },
+  "setup_prerequisites": {
+    "nodejs": {
+      "minimumVersion": "18.0.0",
+      "checkCommand": "node --version",
+      "installInstructions": {
+        "ubuntu": "curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - && sudo apt-get install -y nodejs",
+        "macos": "brew install node@18"
+      }
+    },
+    "npm": {
+      "minimumVersion": "8.0.0",
+      "checkCommand": "npm --version",
+      "bundledWith": "Node.js (no separate installation needed)"
+    }
+  }
+}
+

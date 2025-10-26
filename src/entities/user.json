@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "User Entity",
+  "description": "User entity definition for QTFund application",
+  "type": "object",
+  "properties": {
+    "username": {
+      "type": "string",
+      "description": "Unique user identifier",
+      "examples": ["admin"]
+    },
+    "isAuthenticated": {
+      "type": "boolean",
+      "description": "Indicates if user is currently authenticated"
+    },
+    "sessionToken": {
+      "type": "string",
+      "description": "Authentication session token stored in cookies"
+    }
+  },
+  "required": ["username", "isAuthenticated"]
+}
+
