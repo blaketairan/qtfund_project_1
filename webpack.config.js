@@ -15,7 +15,7 @@ module.exports = {
     compress: true,
     port: 3000,
     open: false,
-    hot: true,
+    hot: false,
     host: '0.0.0.0', // Allow external connections
     allowedHosts: 'all', // Allow all hosts (including through nginx proxy)
     historyApiFallback: {
