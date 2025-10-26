@@ -1,0 +1,76 @@
+{
+  "symbol": {
+    "type": "string",
+    "description": "Stock identifier in format MARKET.CODE (e.g., SH.600519)",
+    "required": true
+  },
+  "stock_name": {
+    "type": "string",
+    "description": "Display name of the stock (e.g., 贵州茅台)",
+    "required": true
+  },
+  "trade_date": {
+    "type": "string",
+    "format": "YYYY-MM-DD",
+    "description": "Trading date",
+    "required": true
+  },
+  "open_price": {
+    "type": "number",
+    "description": "Opening price",
+    "required": true,
+    "minimum": 0
+  },
+  "high_price": {
+    "type": "number",
+    "description": "Highest price of the day",
+    "required": true,
+    "minimum": 0
+  },
+  "low_price": {
+    "type": "number",
+    "description": "Lowest price of the day",
+    "required": true,
+    "minimum": 0
+  },
+  "close_price": {
+    "type": "number",
+    "description": "Closing price",
+    "required": true,
+    "minimum": 0
+  },
+  "volume": {
+    "type": "number",
+    "description": "Trading volume in hands",
+    "required": true,
+    "minimum": 0
+  },
+  "turnover": {
+    "type": "number",
+    "description": "Trading amount",
+    "required": true,
+    "minimum": 0
+  },
+  "price_change": {
+    "type": "number",
+    "description": "Price change amount",
+    "required": true
+  },
+  "price_change_pct": {
+    "type": "number",
+    "description": "Price change percentage",
+    "required": true
+  },
+  "market_code": {
+    "type": "string",
+    "enum": ["SH", "SZ", "BJ"],
+    "description": "Market identifier",
+    "required": true
+  },
+  "premium_rate": {
+    "type": "number",
+    "description": "Premium rate (for funds)",
+    "required": false
+  }
+}
+

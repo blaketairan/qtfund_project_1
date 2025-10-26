@@ -1,0 +1,191 @@
+{
+  "title": "Stock Dashboard API Contracts",
+  "version": "1.0.0",
+  "date": "2025-01-27",
+  "description": "API contracts between frontend dashboard and backend qtfund_project_3",
+  
+  "endpoints": {
+    "GET /api/stock-price/list": {
+      "description": "Fetch paginated list of stocks with optional filtering",
+      "method": "GET",
+      "parameters": {
+        "market_code": {
+          "type": "string",
+          "enum": ["SH", "SZ", "BJ", "SH,SZ", "SH,BJ", "SZ,BJ", "SH,SZ,BJ"],
+          "default": "SH,SZ,BJ",
+          "description": "Comma-separated market codes"
+        },
+        "is_active": {
+          "type": "string",
+          "enum": ["Y", "N"],
+          "default": "Y"
+        },
+        "limit": {
+          "type": "number",
+          "default": 100,
+          "min": 1,
+          "max": 10000
+        },
+        "offset": {
+          "type": "number",
+          "default": 0,
+          "min": 0
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Success",
+          "body": {
+            "code": 200,
+            "message": "success",
+            "data": {
+              "total": "number",
+              "offset": "number",
+              "limit": "number",
+              "items": "StockInfo[]"
+            }
+          }
+        },
+        "400": {
+          "description": "Invalid parameters",
+          "body": {
+            "code": 400,
+            "message": "error message",
+            "error": true
+          }
+        }
+      }
+    },
+    
+    "GET /api/stock-price/info/{symbol}": {
+      "description": "Get detailed stock information",
+      "method": "GET",
+      "parameters": {
+        "symbol": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}\\.\\d{6}$",
+          "required": true,
+          "description": "Stock symbol in MARKET.CODE format"
+        }
+      },
+      "responses": {
+        "200": {
+          "body": "StockInfo"
+        },
+        "404": {
+          "description": "Stock not found"
+        }
+      }
+    },
+    
+    "GET /api/stock-price/query": {
+      "description": "Query historical price data for a stock",
+      "method": "GET",
+      "parameters": {
+        "symbol": {
+          "type": "string",
+          "required": true
+        },
+        "start_date": {
+          "type": "string",
+          "format": "YYYY-MM-DD",
+          "description": "Start date (inclusive)"
+        },
+        "end_date": {
+          "type": "string",
+          "format": "YYYY-MM-DD",
+          "description": "End date (inclusive)"
+        },
+        "limit": {
+          "type": "number",
+          "default": 100,
+          "max": 10000
+        }
+      },
+      "responses": {
+        "200": {
+          "body": {
+            "code": 200,
+            "data": {
+              "items": "StockData[]"
+            }
+          }
+        }
+      }
+    },
+    
+    "POST /api/custom-calculations/execute": {
+      "description": "Execute custom Python script for column calculation",
+      "method": "POST",
+      "description_note": "NEW ENDPOINT - to be implemented in backend",
+      "body": {
+        "script": {
+          "type": "string",
+          "required": true,
+          "description": "Python script code"
+        },
+        "column_name": {
+          "type": "string",
+          "required": true,
+          "description": "User-provided column name"
+        },
+        "stock_symbols": {
+          "type": "array",
+          "items": "string",
+          "required": true,
+          "description": "Stock symbols to calculate for"
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Success",
+          "body": {
+            "code": 200,
+            "data": {
+              "results": [
+                {
+                  "symbol": "string",
+                  "value": "number",
+                  "error": "string | null"
+                }
+              ]
+            }
+          }
+        },
+        "400": {
+          "description": "Invalid Python syntax or script error",
+          "body": {
+            "code": 400,
+            "message": "Error details",
+            "error": true
+          }
+        }
+      }
+    }
+  },
+  
+  "data_types": {
+    "StockInfo": {
+      "symbol": "string",
+      "stock_name": "string",
+      "stock_code": "string",
+      "market_code": "string",
+      "is_active": "string"
+    },
+    "StockData": {
+      "symbol": "string",
+      "stock_name": "string",
+      "trade_date": "string",
+      "open_price": "number",
+      "high_price": "number",
+      "low_price": "number",
+      "close_price": "number",
+      "volume": "number",
+      "turnover": "number",
+      "price_change": "number",
+      "price_change_pct": "number",
+      "market_code": "string"
+    }
+  }
+}
+

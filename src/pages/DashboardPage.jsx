@@ -1,77 +1,84 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
-import { ROUTES } from '../utils/constants.js';
+import { useDashboard } from '../context/DashboardContext.jsx';
+import StockTable from '../components/dashboard/StockTable.jsx';
+import ColumnSettings from '../components/dashboard/ColumnSettings.jsx';
+import SearchBar from '../components/dashboard/SearchBar.jsx';
+import MarketFilter from '../components/dashboard/MarketFilter.jsx';
 
 const DashboardPage = () => {
-  const [userInfo, setUserInfo] = useState('Loading...');
-  const [apiResult, setApiResult] = useState('');
-  const { logout, checkAuthStatus, testApiCall } = useAuth();
-  const navigate = useNavigate();
+  const { state, dispatch } = useDashboard();
+  const [visibleColumns, setVisibleColumns] = useState([
+    'symbol',
+    'stock_name',
+    'close_price',
+    'price_change_pct',
+    'volume',
+    'market_code',
+  ]);
+  const [showColumnSettings, setShowColumnSettings] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedMarkets, setSelectedMarkets] = useState(['SH', 'SZ', 'BJ']);
 
   useEffect(() => {
-    loadUserInfo();
+    const filtered = state.stocks.filter(stock => {
+      const matchesSearch = !searchTerm || 
+        stock.symbol?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        stock.stock_name?.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesMarket = selectedMarkets.includes(stock.market_code);
+      
+      return matchesSearch && matchesMarket;
+    });
+    
+    dispatch({ type: 'SET_FILTERED_STOCKS', payload: filtered });
+  }, [state.stocks, searchTerm, selectedMarkets, dispatch]);
+
+  useEffect(() => {
+    const savedColumns = localStorage.getItem('dashboard_column_config');
+    if (savedColumns) {
+      try {
+        const config = JSON.parse(savedColumns);
+        const visible = config.filter(col => col.visible).map(col => col.key);
+        setVisibleColumns(visible);
+      } catch (err) {
+        console.error('Failed to load column configuration:', err);
+      }
+    }
   }, []);
 
-  const loadUserInfo = async () => {
-    setUserInfo('Checking...');
-    const response = await checkAuthStatus();
-    if (response) {
-      setUserInfo('<span style="color: green;">Authenticated</span>');
-    } else {
-      setUserInfo('<span style="color: red;">Not authenticated</span>');
-    }
-  };
-
-  const handleLogout = async () => {
-    await logout();
-  };
-
-  const handleTestApi = async () => {
-    setApiResult('Testing...');
-    try {
-      const response = await testApiCall();
-      setApiResult('<span style="color: green;">API call successful!</span>');
-    } catch (error) {
-      setApiResult(`<span style="color: red;">API call failed: ${error.message}</span>`);
-    }
-  };
-
   return (
-    <div style={{ maxWidth: '800px', margin: '50px auto', padding: '20px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', paddingBottom: '10px', borderBottom: '1px solid #ddd' }}>
-        <h1 style={{ color: '#333', margin: '0' }}>QTFund Dashboard</h1>
-        <button
-          onClick={handleLogout}
-          style={{ padding: '8px 16px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '3px', cursor: 'pointer' }}
-        >
-          Logout
-        </button>
-      </div>
-      <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '5px', marginBottom: '20px' }}>
-        <h3 style={{ marginTop: '0', color: '#333' }}>Welcome to QTFund!</h3>
-        <p>You have successfully logged in. This is a protected page that requires authentication.</p>
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-        <div style={{ background: 'white', padding: '20px', border: '1px solid #ddd', borderRadius: '5px' }}>
-          <h4 style={{ marginTop: '0', color: '#333' }}>Test API Call</h4>
-          <button
-            onClick={handleTestApi}
-            style={{ padding: '8px 16px', background: '#28a745', color: 'white', border: 'none', borderRadius: '3px', cursor: 'pointer' }}
-          >
-            Test Protected API
-          </button>
-          <div id="apiResult" style={{ marginTop: '10px', fontSize: '14px' }} dangerouslySetInnerHTML={{ __html: apiResult }} />
-        </div>
-        <div style={{ background: 'white', padding: '20px', border: '1px solid #ddd', borderRadius: '5px' }}>
-          <h4 style={{ marginTop: '0', color: '#333' }}>User Info</h4>
-          <p>Username: <span id="userInfo" dangerouslySetInnerHTML={{ __html: userInfo }} /></p>
-          <button
-            onClick={loadUserInfo}
-            style={{ padding: '8px 16px', background: '#17a2b8', color: 'white', border: 'none', borderRadius: '3px', cursor: 'pointer' }}
-          >
-            Refresh Status
-          </button>
+    <div className="min-h-screen bg-gray-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Stock Dashboard</h1>
+                <p className="mt-1 text-sm text-gray-500">Real-time stock data and quantitative analysis</p>
+              </div>
+              <button
+                onClick={() => setShowColumnSettings(!showColumnSettings)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                Column Settings
+              </button>
+            </div>
+            <div className="space-y-3">
+              <SearchBar onSearchChange={setSearchTerm} />
+              <MarketFilter 
+                selectedMarkets={selectedMarkets} 
+                onMarketChange={setSelectedMarkets} 
+              />
+            </div>
+          </div>
+          {showColumnSettings && (
+            <div className="p-6 border-b border-gray-200">
+              <ColumnSettings visibleColumns={visibleColumns} onColumnsChange={setVisibleColumns} />
+            </div>
+          )}
+          <div className="p-6">
+            <StockTable visibleColumns={visibleColumns} />
+          </div>
         </div>
       </div>
     </div>
@@ -79,4 +86,3 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
-
