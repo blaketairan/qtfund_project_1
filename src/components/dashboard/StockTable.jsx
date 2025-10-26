@@ -88,19 +88,11 @@ const StockTable = ({ visibleColumns, selectedScriptIds = [], scriptLibrary = []
   const getScriptColumns = () => {
     if (!selectedScriptIds || selectedScriptIds.length === 0) return [];
     
-    console.log('getScriptColumns - selectedScriptIds:', selectedScriptIds);
-    console.log('getScriptColumns - scriptLibrary:', scriptLibrary);
-    
     return selectedScriptIds.map(scriptId => {
       const script = scriptLibrary.find(s => s.id == scriptId);
-      console.log(`Looking up script ${scriptId}, found:`, script);
-      
-      const columnName = script?.name || script?.description || `Script ${scriptId}`;
-      console.log(`Column name for ${scriptId}:`, columnName);
-      
       return {
         scriptId,
-        columnName
+        columnName: script?.name || script?.description || `Script ${scriptId}`
       };
     });
   };
