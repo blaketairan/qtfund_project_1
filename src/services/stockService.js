@@ -9,7 +9,9 @@ export const fetchStockList = async (options = {}) => {
   if (options.limit) params.append('limit', options.limit);
   if (options.offset) params.append('offset', options.offset);
   if (options.script_ids && options.script_ids.length > 0) {
-    params.append('script_ids', options.script_ids.join(','));
+    options.script_ids.forEach(id => {
+      params.append('script_ids', id);
+    });
   }
 
   const response = await fetch(`${API_BASE}/stock-price/list?${params}`);
