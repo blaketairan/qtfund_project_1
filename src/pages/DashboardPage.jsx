@@ -7,6 +7,7 @@ import SearchBar from '../components/dashboard/SearchBar.jsx';
 import MarketFilter from '../components/dashboard/MarketFilter.jsx';
 import ScriptEditor from '../components/dashboard/ScriptEditor.jsx';
 import ScriptManager from '../components/dashboard/ScriptManager.jsx';
+import ETFFilter from '../components/dashboard/ETFFilter.jsx';
 import { getScripts } from '../services/scriptStorageService.js';
 
 const DashboardPage = () => {
@@ -25,6 +26,7 @@ const DashboardPage = () => {
   const [selectedMarkets, setSelectedMarkets] = useState(['SH', 'SZ', 'BJ']);
   const [selectedScriptIds, setSelectedScriptIds] = useState([]);
   const [scriptLibrary, setScriptLibrary] = useState([]);
+  const [selectedETFType, setSelectedETFType] = useState('all');
 
   useEffect(() => {
     const filtered = state.stocks.filter(stock => {
@@ -105,10 +107,16 @@ const DashboardPage = () => {
             </div>
             <div className="space-y-3">
               <SearchBar onSearchChange={setSearchTerm} />
-              <MarketFilter 
-                selectedMarkets={selectedMarkets} 
-                onMarketChange={setSelectedMarkets} 
-              />
+              <div className="flex items-center space-x-4">
+                <MarketFilter 
+                  selectedMarkets={selectedMarkets} 
+                  onMarketChange={setSelectedMarkets} 
+                />
+                <ETFFilter 
+                  selectedType={selectedETFType}
+                  onTypeChange={setSelectedETFType}
+                />
+              </div>
             </div>
           </div>
           {showColumnSettings && (
@@ -134,7 +142,8 @@ const DashboardPage = () => {
             <StockTable 
               visibleColumns={visibleColumns} 
               selectedScriptIds={selectedScriptIds}
-              scriptLibrary={scriptLibrary} 
+              scriptLibrary={scriptLibrary}
+              selectedETFType={selectedETFType}
             />
           </div>
         </div>

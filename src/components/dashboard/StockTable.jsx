@@ -3,7 +3,7 @@ import { useDashboard } from '../../context/DashboardContext.jsx';
 import { fetchStockList } from '../../services/stockService.js';
 import { formatCurrency, formatPercentage, formatVolume } from '../../utils/numberFormat.js';
 
-const StockTable = ({ visibleColumns, selectedScriptIds = [], scriptLibrary = [] }) => {
+const StockTable = ({ visibleColumns, selectedScriptIds = [], scriptLibrary = [], selectedETFType = 'all' }) => {
   const { state, dispatch } = useDashboard();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,7 +12,7 @@ const StockTable = ({ visibleColumns, selectedScriptIds = [], scriptLibrary = []
 
   useEffect(() => {
     loadStocks();
-  }, [selectedScriptIds]);
+  }, [selectedScriptIds, selectedETFType]);
 
   const loadStocks = async () => {
     setLoading(true);
@@ -21,6 +21,11 @@ const StockTable = ({ visibleColumns, selectedScriptIds = [], scriptLibrary = []
       const options = { limit: 200 };
       if (selectedScriptIds && selectedScriptIds.length > 0) {
         options.script_ids = selectedScriptIds;
+      }
+      if (selectedETFType === 'etf') {
+        options.is_etf = true;
+      } else if (selectedETFType === 'stock') {
+        options.is_etf = false;
       }
       const response = await fetchStockList(options);
       if (response.code === 200 && response.data) {
@@ -133,7 +138,14 @@ const StockTable = ({ visibleColumns, selectedScriptIds = [], scriptLibrary = []
             <tr key={stock.symbol || index} className="hover:bg-gray-50">
               {visibleColumns.includes('symbol') && (
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {stock.symbol}
+                  <div className="flex items-center space-x-2">
+                    <span>{stock.symbol}</span>
+                    {stock.is_etf && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                        ETF
+                      </span>
+                    )}
+                  </div>
                 </td>
               )}
               {visibleColumns.includes('stock_name') && (

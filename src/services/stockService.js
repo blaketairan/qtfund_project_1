@@ -6,6 +6,7 @@ export const fetchStockList = async (options = {}) => {
   const params = new URLSearchParams();
   if (options.market_code) params.append('market_code', options.market_code);
   if (options.is_active !== undefined) params.append('is_active', options.is_active);
+  if (options.is_etf !== undefined) params.append('is_etf', options.is_etf);
   if (options.limit) params.append('limit', options.limit);
   if (options.offset) params.append('offset', options.offset);
   if (options.script_ids && options.script_ids.length > 0) {

@@ -38,12 +38,12 @@ Testing & Integration (Phase 4)
 
 **Independent Test**: Select an ETF filter option and see the stock table update to show only the selected type of instruments.
 
-- [ ] T001 [US1] Create ETFFilter component in src/components/dashboard/ETFFilter.jsx
-- [ ] T002 [P] [US1] Add is_etf parameter support to fetchStockList in src/services/stockService.js
-- [ ] T003 [US1] Add selectedETFType state in DashboardPage.jsx
-- [ ] T004 [US1] Render ETFFilter component in filter area of DashboardPage.jsx
-- [ ] T005 [US1] Pass selectedETFType to StockTable in DashboardPage.jsx
-- [ ] T006 [US1] Modify loadStocks to include is_etf parameter in StockTable.jsx
+- [X] T001 [US1] Create ETFFilter component in src/components/dashboard/ETFFilter.jsx
+- [X] T002 [P] [US1] Add is_etf parameter support to fetchStockList in src/services/stockService.js
+- [X] T003 [US1] Add selectedETFType state in DashboardPage.jsx
+- [X] T004 [US1] Render ETFFilter component in filter area of DashboardPage.jsx
+- [X] T005 [US1] Pass selectedETFType to StockTable in DashboardPage.jsx
+- [X] T006 [US1] Modify loadStocks to include is_etf parameter in StockTable.jsx
 - [ ] T007 [US1] Test ETF filter updates table data correctly
 
 ### Phase 2: User Story 3 - Apply ETF Filter with Other Filters [US3]
@@ -61,7 +61,7 @@ Testing & Integration (Phase 4)
 
 **Independent Test**: View the table and identify ETFs without reading symbol names.
 
-- [ ] T010 [US2] Add ETF badge display in StockTable.jsx for rows where stock.is_etf is true
+- [X] T010 [US2] Add ETF badge display in StockTable.jsx for rows where stock.is_etf is true
 
 ### Phase 4: Polish & Testing
 
