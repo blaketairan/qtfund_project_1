@@ -58,18 +58,53 @@ const StockTable = ({ visibleColumns, selectedScriptIds = [], scriptLibrary = []
     }
   };
 
+  const getValue = (stock, columnKey) => {
+    // Handle regular columns
+    if (stock[columnKey] !== undefined) {
+      return stock[columnKey];
+    }
+    
+    // Handle script columns (columnKey is scriptId)
+    if (columnKey.startsWith('script_')) {
+      const scriptId = columnKey.replace('script_', '');
+      const scriptResult = stock.script_results?.[scriptId];
+      if (typeof scriptResult === 'object') {
+        return scriptResult?.result ?? scriptResult?.error ?? null;
+      }
+      return scriptResult ?? null;
+    }
+    
+    return null;
+  };
+
   const sortedStocks = [...state.filteredStocks].sort((a, b) => {
     if (!sortColumn) return 0;
-    const aVal = a[sortColumn];
-    const bVal = b[sortColumn];
     
+    const aVal = getValue(a, sortColumn);
+    const bVal = getValue(b, sortColumn);
+    
+    // Handle null/undefined values
     if (aVal === null || aVal === undefined) return 1;
     if (bVal === null || bVal === undefined) return -1;
     
+    // Convert to number for numeric comparison
+    const aNum = typeof aVal === 'number' ? aVal : parseFloat(aVal);
+    const bNum = typeof bVal === 'number' ? bVal : parseFloat(bVal);
+    
+    // If both are valid numbers, compare numerically
+    if (!isNaN(aNum) && !isNaN(bNum)) {
+      if (sortDirection === 'asc') {
+        return aNum > bNum ? 1 : -1;
+      } else {
+        return aNum < bNum ? 1 : -1;
+      }
+    }
+    
+    // Otherwise, compare as strings
     if (sortDirection === 'asc') {
-      return aVal > bVal ? 1 : -1;
+      return String(aVal) > String(bVal) ? 1 : -1;
     } else {
-      return aVal < bVal ? 1 : -1;
+      return String(aVal) < String(bVal) ? 1 : -1;
     }
   });
 
@@ -126,9 +161,13 @@ const StockTable = ({ visibleColumns, selectedScriptIds = [], scriptLibrary = []
             {scriptColumns.map(col => (
               <th
                 key={col.scriptId}
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                onClick={() => handleSort(`script_${col.scriptId}`)}
               >
                 {col.columnName}
+                {sortColumn === `script_${col.scriptId}` && (
+                  <span className="ml-2">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                )}
               </th>
             ))}
           </tr>

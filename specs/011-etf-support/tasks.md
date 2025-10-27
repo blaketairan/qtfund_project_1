@@ -8,8 +8,8 @@
 
 Add ETF filtering capability to the stock dashboard. Users can filter by instrument type (ETFs, Stocks, or All), and ETFs are visually identified in the table with badges. The filter works in combination with existing market and search filters.
 
-**Total Tasks**: 15  
-**Completed**: 6 (40%)  
+**Total Tasks**: 18  
+**Completed**: 9 (50%)  
 **MVP Scope**: User Stories 1 and 3 (core filtering)  
 **Estimated Time**: 2-3 hours
 
@@ -68,10 +68,18 @@ Testing & Integration (Phase 4)
 **Goal**: Verify complete ETF filtering functionality and edge cases.
 
 - [ ] T011 Test ETF filter persistence (optional localStorage)
-- [ ] T012 Test sorting works with ETF data
-- [ ] T013 Test custom script columns work with ETF data
+- [X] T012 Test sorting works with ETF data (enhanced with numeric sorting)
+- [X] T013 Test custom script columns work with ETF data (added sortable script columns)
 - [ ] T014 Test ETF filter with limit and pagination parameters
 - [ ] T015 Test all three filters (ETF + Market + Search) work together
+
+### Phase 5: Numeric Column Sorting Enhancement
+
+**Goal**: Enable sorting for numeric columns including custom script columns.
+
+- [X] T016 Enhanced sorting logic to support numeric values
+- [X] T017 Made custom script columns sortable
+- [X] T018 Improved sorting logic to handle both object and primitive script results
 
 ## Implementation Strategy
 
