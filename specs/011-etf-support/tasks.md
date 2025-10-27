@@ -8,8 +8,8 @@
 
 Add ETF filtering capability to the stock dashboard. Users can filter by instrument type (ETFs, Stocks, or All), and ETFs are visually identified in the table with badges. The filter works in combination with existing market and search filters.
 
-**Total Tasks**: 10  
-**Completed**: 0 (0%)  
+**Total Tasks**: 15  
+**Completed**: 6 (40%)  
 **MVP Scope**: User Stories 1 and 3 (core filtering)  
 **Estimated Time**: 2-3 hours
 
