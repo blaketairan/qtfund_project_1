@@ -10,7 +10,7 @@
 
 Successfully implemented ETF filtering capability for the stock dashboard. Users can filter by instrument type (ETFs, Stocks, or All), and ETFs are visually identified in the table with badges. The filter integrates seamlessly with existing market and search filters.
 
-## Completed Tasks (6/15)
+## Completed Tasks (9/18 - 50%)
 
 ### Phase 1: User Story 1 - ETF Filter Control ✓
 
@@ -46,6 +46,23 @@ Successfully implemented ETF filtering capability for the stock dashboard. Users
   - Styled with blue badge: `bg-blue-100 text-blue-800`
   - Badge text: "ETF"
 
+### Phase 5: Numeric Column Sorting Enhancement ✓
+
+- ✅ **T016**: Enhanced sorting logic to support numeric values
+  - Created `getValue()` helper function to extract values from regular and script columns
+  - Improved sorting to detect and compare numeric values properly
+  - Handles both object and primitive script result values
+
+- ✅ **T017**: Made custom script columns sortable
+  - Added click handlers to script column headers
+  - Added sort indicators (↑↓) to script columns
+  - Column keys prefixed with `script_` to differentiate from regular columns
+
+- ✅ **T018**: Improved sorting logic to handle both object and primitive script results
+  - Extracts values from `script_results[scriptId]` regardless of structure
+  - Converts values to numbers for proper numeric comparison
+  - Falls back to string comparison for non-numeric values
+
 ## Implementation Details
 
 ### Files Modified
@@ -64,11 +81,14 @@ Successfully implemented ETF filtering capability for the stock dashboard. Users
    - Imported and rendered ETFFilter component
    - Passed ETF filter prop to StockTable
 
-4. **src/components/dashboard/StockTable.jsx** (MODIFIED)
+4. **src/components/dashboard/StockTable.jsx** (MODIFIED - Enhanced)
    - Added `selectedETFType` prop
    - Updated `loadStocks` to include `is_etf` parameter
    - Added ETF badge display in symbol column
    - Updated `useEffect` dependency array
+   - **NEW**: Added `getValue()` helper function to extract values from stocks and script results
+   - **NEW**: Enhanced sorting logic to support numeric columns including script columns
+   - **NEW**: Made script column headers clickable with sort indicators
 
 ### API Integration
 
@@ -94,7 +114,13 @@ Successfully implemented ETF filtering capability for the stock dashboard. Users
 - Styled: `bg-blue-100 text-blue-800`
 - Small, unobtrusive design
 
-## Pending Tasks (9/15)
+**Sorting Enhancement**:
+- All numeric columns now support sorting with visual indicators (↑↓)
+- Script columns are clickable and sortable
+- Sort direction toggles on click
+- Proper numeric comparison for accurate sorting
+
+## Pending Tasks (9/18)
 
 ### Phase 1 (Testing)
 - ⏳ **T007**: Test ETF filter updates table data correctly
