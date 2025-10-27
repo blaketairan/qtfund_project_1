@@ -1,0 +1,183 @@
+{
+  "title": "ETF Filter API Contracts",
+  "version": "1.0.0",
+  "date": "2025-01-27",
+  "feature": "011-etf-support",
+  "description": "API contract for ETF filtering in stock list queries",
+  
+  "endpoints": {
+    "GET /api/stock-price/list": {
+      "summary": "Fetch stock/instrument list with optional ETF filtering",
+      "description": "Returns instruments filtered by ETF status when is_etf parameter provided",
+      "method": "GET",
+      "queryParameters": {
+        "is_etf": {
+          "type": "boolean",
+          "required": false,
+          "description": "Filter by ETF status",
+          "values": {
+            "true": "Return only ETF instruments",
+            "false": "Return only stock instruments (excluding ETFs)",
+            "omitted": "Return all instruments (stocks and ETFs)"
+          }
+        },
+        "market_code": {
+          "type": "string",
+          "enum": ["SH", "SZ", "BJ"],
+          "required": false,
+          "description": "Filter by market code"
+        },
+        "limit": {
+          "type": "number",
+          "required": false,
+          "default": 200,
+          "description": "Maximum number of records to return"
+        },
+        "offset": {
+          "type": "number",
+          "required": false,
+          "default": 0,
+          "description": "Pagination offset"
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Successful response with filtered instruments",
+          "contentType": "application/json",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "number",
+                "example": 200
+              },
+              "data": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/InstrumentWithETF" }
+              }
+            }
+          },
+          "example": {
+            "code": 200,
+            "data": [
+              {
+                "symbol": "SH.512880",
+                "stock_name": "证券ETF",
+                "is_etf": true,
+                "close_price": 1.234,
+                "price_change_pct": 0.1234,
+                "volume": 1000000,
+                "market_code": "SH"
+              },
+              {
+                "symbol": "SH.600519",
+                "stock_name": "贵州茅台",
+                "is_etf": false,
+                "close_price": 1623.45,
+                "price_change_pct": 2.34,
+                "volume": 1256789,
+                "market_code": "SH"
+              }
+            ]
+          }
+        },
+        "400": {
+          "description": "Bad request (invalid parameters)"
+        },
+        "500": {
+          "description": "Server error"
+        }
+      }
+    }
+  },
+  
+  "definitions": {
+    "InstrumentWithETF": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "#/definitions/BaseInstrument" },
+        {
+          "type": "object",
+          "properties": {
+            "is_etf": {
+              "type": "boolean",
+              "description": "Whether this instrument is an ETF",
+              "required": false
+            }
+          }
+        }
+      ]
+    },
+    
+    "BaseInstrument": {
+      "type": "object",
+      "properties": {
+        "symbol": { "type": "string" },
+        "stock_name": { "type": "string" },
+        "close_price": { "type": "number" },
+        "price_change_pct": { "type": "number" },
+        "volume": { "type": "number" },
+        "market_code": { "type": "string", "enum": ["SH", "SZ", "BJ"] }
+      }
+    }
+  },
+  
+  "business_rules": {
+    "etf_filtering": {
+      "description": "Filter instruments by ETF status",
+      "etf_only": "When is_etf=true, return only instruments where is_etf=true",
+      "stock_only": "When is_etf=false, return only instruments where is_etf=false",
+      "all_instruments": "When is_etf omitted, return all instruments regardless of ETF status"
+    },
+    
+    "filter_combination": {
+      "description": "ETF filter works with other filters",
+      "with_market": "is_etf and market_code can be used together",
+      "with_limit": "Pagination works with ETF filtering",
+      "with_search": "Client-side search applies after ETF filtering"
+    },
+    
+    "response_consistency": {
+      "description": "Response format consistent for all filter combinations",
+      "missing_is_etf": "If is_etf field missing in response, assume false (stock)",
+      "backward_compatibility": "Existing clients see is_etf field without breaking"
+    }
+  },
+  
+  "frontend_requirements": {
+    "filter_state": {
+      "selection": "User selects 'all', 'etf', or 'stock'",
+      "api_mapping": {
+        "all": "Omit is_etf parameter",
+        "etf": "Send is_etf=true",
+        "stock": "Send is_etf=false"
+      }
+    },
+    
+    "visual_indicator": {
+      "location": "Table row",
+      "display": "Badge, label, or text showing 'ETF'",
+      "condition": "Show when stock.is_etf === true"
+    },
+    
+    "persistence": {
+      "optional": true,
+      "storage": "localStorage key 'dashboard_etf_filter'",
+      "format": "string: 'all' | 'etf' | 'stock'"
+    }
+  },
+  
+  "validation_rules": {
+    "parameter_format": {
+      "is_etf": "Can be boolean true/false or string 'true'/'false'",
+      "validation": "Backend accepts both formats"
+    },
+    
+    "response_validation": {
+      "required_fields": ["code", "data"],
+      "is_etf_field": "Optional in response, defaults to false if missing",
+      "array_check": "data must be array"
+    }
+  }
+}
+
