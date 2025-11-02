@@ -26,7 +26,7 @@ const DashboardPage = () => {
   const [selectedMarkets, setSelectedMarkets] = useState(['SH', 'SZ', 'BJ']);
   const [selectedScriptIds, setSelectedScriptIds] = useState([]);
   const [scriptLibrary, setScriptLibrary] = useState([]);
-  const [selectedETFType, setSelectedETFType] = useState('all');
+  const [selectedETFType, setSelectedETFType] = useState('etf');
 
   useEffect(() => {
     const filtered = state.stocks.filter(stock => {
@@ -34,13 +34,11 @@ const DashboardPage = () => {
         stock.symbol?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         stock.stock_name?.toLowerCase().includes(searchTerm.toLowerCase());
       
-      const matchesMarket = selectedMarkets.includes(stock.market_code);
-      
-      return matchesSearch && matchesMarket;
+      return matchesSearch;
     });
     
     dispatch({ type: 'SET_FILTERED_STOCKS', payload: filtered });
-  }, [state.stocks, searchTerm, selectedMarkets, dispatch]);
+  }, [state.stocks, searchTerm, dispatch]);
 
   useEffect(() => {
     const savedColumns = localStorage.getItem('dashboard_column_config');
@@ -144,6 +142,7 @@ const DashboardPage = () => {
               selectedScriptIds={selectedScriptIds}
               scriptLibrary={scriptLibrary}
               selectedETFType={selectedETFType}
+              selectedMarkets={selectedMarkets}
             />
           </div>
         </div>

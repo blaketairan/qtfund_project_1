@@ -3,7 +3,7 @@ import { useDashboard } from '../../context/DashboardContext.jsx';
 import { fetchStockList } from '../../services/stockService.js';
 import { formatCurrency, formatPercentage, formatVolume } from '../../utils/numberFormat.js';
 
-const StockTable = ({ visibleColumns, selectedScriptIds = [], scriptLibrary = [], selectedETFType = 'all' }) => {
+const StockTable = ({ visibleColumns, selectedScriptIds = [], scriptLibrary = [], selectedETFType = 'all', selectedMarkets = [] }) => {
   const { state, dispatch } = useDashboard();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,21 +12,28 @@ const StockTable = ({ visibleColumns, selectedScriptIds = [], scriptLibrary = []
 
   useEffect(() => {
     loadStocks();
-  }, [selectedScriptIds, selectedETFType]);
+  }, [selectedScriptIds, selectedETFType, selectedMarkets]);
 
   const loadStocks = async () => {
     setLoading(true);
     setError(null);
     try {
-      const options = { limit: 200 };
+      const options = {};
+      
+      if (selectedMarkets && selectedMarkets.length > 0) {
+        options.market_code = selectedMarkets.join(',');
+      }
+      
       if (selectedScriptIds && selectedScriptIds.length > 0) {
         options.script_ids = selectedScriptIds;
       }
+      
       if (selectedETFType === 'etf') {
         options.is_etf = true;
       } else if (selectedETFType === 'stock') {
         options.is_etf = false;
       }
+      
       const response = await fetchStockList(options);
       if (response.code === 200 && response.data) {
         const items = Array.isArray(response.data) 
@@ -140,7 +147,15 @@ const StockTable = ({ visibleColumns, selectedScriptIds = [], scriptLibrary = []
   const scriptColumns = getScriptColumns();
 
   return (
-    <div className="overflow-x-auto">
+    <div className="relative overflow-x-auto">
+      {loading && (
+        <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <p className="mt-4 text-gray-600">Loading stock data...</p>
+          </div>
+        </div>
+      )}
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
