@@ -2,7 +2,8 @@
 
 **Feature Branch**: `011-etf-support`  
 **Created**: 2025-01-27  
-**Status**: Draft  
+**Status**: ✅ Completed  
+**Implemented**: 2025-01-27  
 **Input**: User description: "需要在dashboard中添加ETF筛选功能，支持按ETF类型过滤股票列表"
 
 > **Note**: This specification MUST be placed in the target project's `specs/011-etf-support/` directory (e.g., `qtfund_project_1/specs/`).
