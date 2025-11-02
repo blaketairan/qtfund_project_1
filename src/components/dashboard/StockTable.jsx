@@ -20,7 +20,10 @@ const StockTable = ({ visibleColumns, selectedScriptIds = [], scriptLibrary = []
     try {
       const options = {};
       
-      if (selectedMarkets && selectedMarkets.length > 0) {
+      const allMarkets = ['SH', 'SZ', 'BJ'];
+      const isAllMarketsSelected = selectedMarkets && selectedMarkets.length === allMarkets.length;
+      
+      if (selectedMarkets && selectedMarkets.length > 0 && !isAllMarketsSelected) {
         options.market_code = selectedMarkets.join(',');
       }
       
