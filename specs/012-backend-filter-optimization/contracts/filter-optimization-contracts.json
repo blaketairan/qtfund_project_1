@@ -1,0 +1,312 @@
+{
+  "feature": "012-backend-filter-optimization",
+  "created": "2025-01-27",
+  "description": "API contracts for backend market filtering and loading UX optimization",
+  
+  "endpoints": [
+    {
+      "id": "stock-list-with-market-filter",
+      "method": "GET",
+      "path": "/api/stock-price/list",
+      "description": "Fetch stock list with server-side market filtering",
+      
+      "queryParameters": [
+        {
+          "name": "market_code",
+          "type": "string",
+          "required": false,
+          "description": "Comma-separated market codes to filter results",
+          "examples": ["SH", "SZ", "BJ", "SH,SZ", "SH,BJ", "SZ,BJ"],
+          "validation": "Must be comma-separated values from [SH, SZ, BJ]"
+        },
+        {
+          "name": "is_etf",
+          "type": "boolean",
+          "required": false,
+          "description": "Filter by ETF status",
+          "examples": [true, false]
+        },
+        {
+          "name": "script_ids",
+          "type": "array",
+          "required": false,
+          "description": "Array of script IDs for custom calculations",
+          "examples": ["1", "2", "1&script_ids=2&script_ids=3"]
+        }
+      ],
+      
+      "requestExamples": [
+        {
+          "scenario": "Single market filter",
+          "url": "/api/stock-price/list?market_code=SH",
+          "description": "Get all Shanghai market stocks"
+        },
+        {
+          "scenario": "Multiple markets filter",
+          "url": "/api/stock-price/list?market_code=SH,SZ",
+          "description": "Get stocks from Shanghai and Shenzhen markets"
+        },
+        {
+          "scenario": "All markets (no filter)",
+          "url": "/api/stock-price/list",
+          "description": "Get stocks from all markets"
+        },
+        {
+          "scenario": "Combined filters",
+          "url": "/api/stock-price/list?market_code=SH&is_etf=true&script_ids=1&script_ids=2",
+          "description": "Get Shanghai ETFs with script calculations"
+        }
+      ],
+      
+      "successResponse": {
+        "status": 200,
+        "contentType": "application/json",
+        "schema": {
+          "code": "number",
+          "data": "array"
+        },
+        "example": {
+          "code": 200,
+          "data": [
+            {
+              "symbol": "SH.600000",
+              "stock_name": "浦发银行",
+              "market_code": "SH",
+              "close_price": 7.89,
+              "price_change_pct": 1.23,
+              "volume": 12345678,
+              "is_etf": false,
+              "script_results": {
+                "1": 0.1234,
+                "2": -0.0567
+              }
+            },
+            {
+              "symbol": "SH.600016",
+              "stock_name": "民生银行",
+              "market_code": "SH",
+              "close_price": 3.45,
+              "price_change_pct": -0.58,
+              "volume": 23456789,
+              "is_etf": false,
+              "script_results": {
+                "1": -0.0234,
+                "2": 0.0123
+              }
+            }
+          ]
+        },
+        "notes": [
+          "Data array can contain 1000+ items (no limit)",
+          "script_results may be null if no scripts requested",
+          "market_code always present in response for filtering verification"
+        ]
+      },
+      
+      "errorResponses": [
+        {
+          "status": 400,
+          "scenario": "Invalid market code",
+          "example": {
+            "code": 400,
+            "message": "Invalid market_code parameter"
+          }
+        },
+        {
+          "status": 500,
+          "scenario": "Server error during processing",
+          "example": {
+            "code": 500,
+            "message": "Internal server error"
+          }
+        },
+        {
+          "status": 504,
+          "scenario": "Query timeout (>10 minutes)",
+          "example": {
+            "code": 504,
+            "message": "Gateway timeout"
+          }
+        }
+      ],
+      
+      "timeout": {
+        "backend": "600 seconds (10 minutes)",
+        "frontend": "600 seconds (10 minutes)",
+        "notes": "Extended timeout to support complex script calculations on large datasets"
+      },
+      
+      "performanceExpectations": {
+        "withoutScripts": {
+          "typical": "< 1 second",
+          "maximum": "5 seconds"
+        },
+        "withScripts": {
+          "typical": "5-30 seconds",
+          "maximum": "10 minutes",
+          "notes": "Depends on script complexity and dataset size"
+        }
+      }
+    }
+  ],
+  
+  "frontendChanges": [
+    {
+      "file": "src/services/stockService.js",
+      "changes": [
+        {
+          "type": "parameter_handling",
+          "description": "market_code parameter already supported, no changes needed"
+        },
+        {
+          "type": "timeout_config",
+          "description": "Optional: Add explicit 10-minute timeout via AbortController",
+          "required": false
+        }
+      ]
+    },
+    {
+      "file": "src/components/dashboard/StockTable.jsx",
+      "changes": [
+        {
+          "type": "props",
+          "description": "Add selectedMarkets prop"
+        },
+        {
+          "type": "useEffect",
+          "description": "Add selectedMarkets to dependencies"
+        },
+        {
+          "type": "api_call",
+          "description": "Pass market_code parameter based on selectedMarkets"
+        },
+        {
+          "type": "remove_limit",
+          "description": "Remove limit: 200 from API options"
+        }
+      ]
+    },
+    {
+      "file": "src/pages/DashboardPage.jsx",
+      "changes": [
+        {
+          "type": "filtering_logic",
+          "description": "Remove client-side market filtering from useEffect"
+        },
+        {
+          "type": "props",
+          "description": "Pass selectedMarkets to StockTable component"
+        }
+      ]
+    }
+  ],
+  
+  "testScenarios": [
+    {
+      "id": "single-market-filter",
+      "description": "Filter by single market",
+      "steps": [
+        "Select 'Shanghai' market filter",
+        "Verify API called with market_code=SH",
+        "Verify only SH stocks displayed",
+        "Verify loading animation shown during request"
+      ],
+      "expectedResult": "Only Shanghai market stocks displayed"
+    },
+    {
+      "id": "multiple-markets-filter",
+      "description": "Filter by multiple markets",
+      "steps": [
+        "Select 'Shanghai' and 'Shenzhen' markets",
+        "Verify API called with market_code=SH,SZ",
+        "Verify stocks from both markets displayed"
+      ],
+      "expectedResult": "SH and SZ stocks displayed, BJ stocks excluded"
+    },
+    {
+      "id": "all-markets",
+      "description": "Show all markets",
+      "steps": [
+        "Deselect all market filters (or select all)",
+        "Verify API called without market_code parameter",
+        "Verify stocks from all markets displayed"
+      ],
+      "expectedResult": "All stocks displayed regardless of market"
+    },
+    {
+      "id": "combined-filters",
+      "description": "Combine market + ETF filters",
+      "steps": [
+        "Select 'Shanghai' market",
+        "Select 'ETF' filter",
+        "Verify API called with market_code=SH&is_etf=true",
+        "Verify only Shanghai ETFs displayed"
+      ],
+      "expectedResult": "Only Shanghai ETFs displayed"
+    },
+    {
+      "id": "long-query",
+      "description": "Handle long-running query (5+ minutes)",
+      "steps": [
+        "Select filters that trigger slow query (e.g., all markets + multiple scripts)",
+        "Verify loading animation appears",
+        "Wait 5+ minutes",
+        "Verify loading animation persists",
+        "Verify data displays when query completes"
+      ],
+      "expectedResult": "Loading animation persists, data displays correctly after long wait"
+    },
+    {
+      "id": "large-dataset",
+      "description": "Handle large result set (1000+ rows)",
+      "steps": [
+        "Query that returns 1000+ stocks",
+        "Verify all data displayed",
+        "Verify table renders without performance issues"
+      ],
+      "expectedResult": "All 1000+ rows displayed, table scrolls smoothly"
+    },
+    {
+      "id": "error-handling",
+      "description": "Handle API errors gracefully",
+      "steps": [
+        "Simulate network error or backend failure",
+        "Verify error message displayed",
+        "Verify loading animation hidden",
+        "Verify user can retry"
+      ],
+      "expectedResult": "Clear error message, no infinite loading state"
+    }
+  ],
+  
+  "backendRequirements": [
+    {
+      "requirement": "Support market_code parameter",
+      "status": "ALREADY IMPLEMENTED",
+      "notes": "Backend already supports market_code filtering"
+    },
+    {
+      "requirement": "Handle comma-separated market codes",
+      "status": "ALREADY IMPLEMENTED",
+      "notes": "Backend parses comma-separated values correctly"
+    },
+    {
+      "requirement": "Support queries without limit parameter",
+      "status": "ALREADY IMPLEMENTED",
+      "notes": "Backend returns all matching data when limit omitted"
+    },
+    {
+      "requirement": "10-minute query timeout",
+      "status": "ALREADY IMPLEMENTED",
+      "notes": "Backend supports extended timeout for script calculations"
+    }
+  ],
+  
+  "notes": [
+    "No backend changes required - all functionality already supported",
+    "Frontend changes focus on removing client-side filtering and improving UX",
+    "Extended timeout support already exists, frontend just needs to wait appropriately",
+    "Removing limit parameter allows users to access complete datasets"
+  ]
+}
+
